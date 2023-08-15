@@ -58,11 +58,11 @@
 				<NuxtLink to="/products" class="nav-item nav-link"> 課程列表 </NuxtLink>
 				<NuxtLink to="/qa" class="nav-item nav-link"> 常見問題 </NuxtLink>
 				<NuxtLink to="/contact" class="nav-item nav-link"> 聯絡我們 </NuxtLink>
-				<router-link to="/cart" class="nav-item nav-link">
+				<NuxtLink to="/cart" class="nav-item nav-link">
 					<i class="fas fa-shopping-cart"></i>
 					<!-- <span class="badge badge-light">{{ carts.length }}</span> -->
 					<span class="badge badge-light">2</span>
-				</router-link>
+				</NuxtLink>
 			</div>
 		</div>
 	</nav>
