@@ -4,30 +4,18 @@
 	<div class="home">
 		<div class="position-relative banner">
 			<div class="position-absolute banner-indexbg"></div>
-			<i
-				class="fas fa-angle-down banner-arrow wow animate__fadeInDown ani-infi"
-				data-wow-delay="2s"
-				data-wow-duration="1.5s"
-			></i>
+			<i class="fas fa-angle-down banner-arrow ani-infi-arrow"></i>
 			<div class="container d-flex flex-column banner-body">
 				<div class="row justify-content-center my-auto">
-					<div
-						class="col-md-6 banner-textarea wow animate__fadeInDown"
-						data-wow-duration="1s"
-					>
+					<div class="col-md-6 banner-textarea ani-banner">
 						<p class="mb-0 banner-textarea__text">
 							想讓身體更健康、更強壯嗎? <br />
 							<span class="shopname">FitSpace</span
 							>能夠提供給您正確的飲食知識、運動方法
 						</p>
-						<router-link
-							to="/products/"
-							class="btn btn-dark mt-4 wow animate__tada ani-infi3"
-							data-wow-delay="2s"
-							data-wow-duration="2s"
-						>
+						<NuxtLink to="/products/" class="btn btn-dark mt-4 ani-scale-btn">
 							我要上課
-						</router-link>
+						</NuxtLink>
 					</div>
 				</div>
 			</div>
@@ -107,7 +95,7 @@
 				</div>
 			</div>
 		</div>
-		<!-- <div class="home-topic mt-6 mb-6">
+		<div class="home-topic mt-6 mb-6">
 			<div class="container">
 				<h2 class="home-title">熱門課程</h2>
 				<div class="row">
@@ -126,18 +114,18 @@
 									為 1 對
 									1的教學課程，從身體評估、目標了解到操作器械以達到鍛鍊效果。
 								</p>
-								<div class="prod-price">
-									<div class="float-left">
+								<div class="prod-price d-flex justify-content-between">
+									<div class="">
 										<del>NT$1,200</del>
 									</div>
-									<div class="float-right prod-price__special">NT$1,000</div>
+									<div class="prod-price__special">NT$1,000</div>
 								</div>
 							</div>
-							<router-link
+							<NuxtLink
 								to="/product/T19WN0ALYz2OEYHKYdQjQMKKmSkqHbS9aIAp2TtbBg3OZXm1tyxWT6mrDOTDd6Z4"
 								class="prod-link"
 							>
-							</router-link>
+							</NuxtLink>
 						</div>
 					</div>
 					<div class="col-lg-4 col-md-6">
@@ -154,18 +142,18 @@
 								<p class="text-muted mt-3 prod-content">
 									藉由身體延展搭配呼吸調整，有助疏解壓力，體態之雕塑及肢體平衡。
 								</p>
-								<div class="prod-price">
-									<div class="float-left">
+								<div class="prod-price d-flex justify-content-between">
+									<div class="">
 										<del>NT$600</del>
 									</div>
-									<div class="float-right prod-price__special">NT$400</div>
+									<div class="prod-price__special">NT$400</div>
 								</div>
 							</div>
-							<router-link
+							<NuxtLink
 								to="/product/0nGGvACFS5KmDD2JpSBWgT6Xhrtb5ZAWXz7m9cIswHQEUBukyMhRdbIboWEeVfAF"
 								class="prod-link"
 							>
-							</router-link>
+							</NuxtLink>
 						</div>
 					</div>
 					<div class="col-lg-4 col-md-6">
@@ -182,22 +170,22 @@
 								<p class="text-muted mt-3 prod-content">
 									為簡單的有氧運動，搭配快慢不同情境的音樂鍛鍊下半身肌群，燃燒大量脂肪。
 								</p>
-								<div class="prod-price">
-									<div class="float-left">
+								<div class="prod-price d-flex justify-content-between">
+									<div class="">
 										<del>NT$400</del>
 									</div>
-									<div class="float-right prod-price__special">NT$300</div>
+									<div class="prod-price__special">NT$300</div>
 								</div>
 							</div>
-							<router-link
+							<NuxtLink
 								to="/product/D7qyFGxIXWFg2Hk1PxzXUF14cPEOBOBOV93yllIMUX91KtdYRqbzuwCTIae5xItO"
 								class="prod-link"
 							>
-							</router-link>
+							</NuxtLink>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div> -->
+		</div>
 	</div>
 </template>

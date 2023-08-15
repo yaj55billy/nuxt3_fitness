@@ -1,19 +1,7 @@
 <script setup></script>
 
 <template>
-	<div class="position-relative banner">
-		<div class="position-absolute banner-prodbg"></div>
-		<div class="container d-flex flex-column banner-body banner-body-prod">
-			<div class="row justify-content-center my-auto">
-				<div
-					class="col-md-6 banner-textarea wow animate__fadeInDown"
-					data-wow-duration="1s"
-				>
-					<h3 class="banner-textarea__title">常見問題</h3>
-				</div>
-			</div>
-		</div>
-	</div>
+	<PageBanner :text="'關於我們'" />
 	<div class="mt-6 mb-6">
 		<div class="container">
 			<h2 class="home-title">常見問題</h2>

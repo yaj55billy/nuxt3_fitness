@@ -40,7 +40,7 @@
 </script>
 
 <template>
-	<div>
+	<div class="app">
 		<h2>後台管理頁面</h2>
 		<nav
 			class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap shadow navbar-expand"

@@ -1,19 +1,7 @@
 <script setup></script>
 
 <template>
-	<div class="position-relative banner">
-		<div class="position-absolute banner-prodbg"></div>
-		<div class="container d-flex flex-column banner-body banner-body-prod">
-			<div class="row justify-content-center my-auto">
-				<div
-					class="col-md-6 banner-textarea wow animate__fadeInDown"
-					data-wow-duration="1s"
-				>
-					<h3 class="banner-textarea__title">關於我們</h3>
-				</div>
-			</div>
-		</div>
-	</div>
+	<PageBanner :text="'關於我們'" />
 	<div class="mt-6 mb-6">
 		<div class="container">
 			<h2 class="home-title">經營理念</h2>
@@ -23,14 +11,10 @@
 						src="https://hexschool-api.s3.us-west-2.amazonaws.com/custom/shcmC7WhOjZFX3wksjAU5jqI1fYxntSCzcoEolKucbSd6AXbFhkUsoTjQfeHo2LPrcF1MXz1LscEfGKKpIyg5JFf7WWdBGolySlCPZ6VtstexHFyw5OBiG3mb6RMAUup.jpg"
 						alt="教練"
 						title="Tony 教練"
-						class="img-fluid wow animate__fadeIn"
-						data-wow-duration=".5s"
+						class="img-fluid"
 					/>
 				</div>
-				<div
-					class="col-md-8 m-auto text-left wow animate__fadeIn"
-					data-wow-duration=".5s"
-				>
+				<div class="col-md-8 m-auto text-left">
 					<h4 class="mt-4">關於 <span class="font-ubuntu">FitSpace</span></h4>
 					<p class="text-muted">
 						現在的社會相當便利，運用科技就能達成許多事情，像是網購各式各樣的物品、或者是最近很火紅的外送平台，
