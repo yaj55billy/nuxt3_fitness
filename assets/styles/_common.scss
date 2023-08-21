@@ -393,3 +393,8 @@ h6 {
 		}
 	}
 }
+
+// 表單相關
+.form-control:focus {
+	box-shadow: 0 0 0 0;
+}
