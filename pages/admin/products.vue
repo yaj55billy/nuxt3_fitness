@@ -1,13 +1,11 @@
 <script setup>
+import Toast from "@/components/Toast.vue";
+import { useToastStore } from "@/stores/useToast.js";
+const store = useToastStore();
+
 definePageMeta({
 	layout: false,
 });
-
-// const props = defineProps({
-// 	test: String,
-// });
-
-// console.log(props);
 
 const config = useRuntimeConfig(); // 取 .env
 const products = ref([]);
@@ -23,10 +21,14 @@ const products = ref([]);
 onMounted(() => {
 	// products
 	// getProducts();
+
+	store.messageHandle("檔案上傳失敗，請再檢查是不是檔案大小超過 2MB");
+	store.isShowHandle();
 });
 </script>
 
 <template>
+	<Toast />
 	<div class="mt-4">
 		<!-- <loading :active.sync="isLoading"></loading> -->
 		<h2>產品列表</h2>

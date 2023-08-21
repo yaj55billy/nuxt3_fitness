@@ -1,19 +1,12 @@
 <script setup>
-const isShow = ref(false);
-onMounted(() => {
-	isShow.value = true;
-
-	setTimeout(() => {
-		isShow.value = false;
-	}, 4000);
-});
+import { useToastStore } from "@/stores/useToast.js";
+const store = useToastStore();
 </script>
 
 <template>
-	<!-- data-bs-delay="10000" -->
 	<div
 		class="toast"
-		:class="{ show: isShow }"
+		:class="{ show: store.isShow }"
 		role="alert"
 		aria-live="assertive"
 		aria-atomic="true"
@@ -30,17 +23,15 @@ onMounted(() => {
 			>
 				<rect width="100%" height="100%" fill="#274555"></rect>
 			</svg>
-			<strong class="me-auto">訊息通知</strong>
+			<strong class="me-auto ms-2">訊息通知</strong>
 			<button
 				type="button"
 				class="btn-close"
 				data-bs-dismiss="toast"
 				aria-label="Close"
-			>
-				<span aria-hidden="true">&times;</span>
-			</button>
+			></button>
 		</div>
-		<div class="toast-body">測試</div>
+		<div class="toast-body">{{ store.message }}</div>
 	</div>
 </template>
 
@@ -49,7 +40,7 @@ onMounted(() => {
 	position: fixed;
 	top: 20px;
 	right: 20px;
-	min-width: 300px;
+	max-width: 300px;
 	z-index: 1050;
 }
 </style>
