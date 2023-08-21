@@ -1,37 +1,34 @@
 <script setup>
-import { h } from "vue";
-import Toasts from "@/components/Toast";
-import { useLoading } from "vue-loading-overlay";
-import LoadingCustom from "@/components/LoadingCustom";
+// import { h } from "vue";
+// // import Toasts from "@/components/Toast";
+// import { useLoading } from "vue-loading-overlay";
+// import LoadingCustom from "@/components/LoadingCustom";
 
-const pageLoading = ref(null);
+// const pageLoading = ref(null);
 
-const test = ref("父字串");
+// onMounted(() => {
+// 	const $loading = useLoading(
+// 		{
+// 			container: pageLoading.value,
+// 			canCancel: true, // default false
+// 			// onCancel: this.yourCallbackMethod,
+// 			zIndex: 999,
+// 			// loader: "spinner",
+// 			width: 64,
+// 			height: 64,
+// 			opacity: 0.5,
+// 		},
+// 		{
+// 			// Pass slots by their names
+// 			default: () => h(LoadingCustom),
+// 		}
+// 	);
+// 	$loading.show({
+// 		// Optional parameters
+// 	});
 
-onMounted(() => {
-	// console.log(pageLoading.value);
-	const $loading = useLoading(
-		{
-			container: pageLoading.value,
-			canCancel: true, // default false
-			// onCancel: this.yourCallbackMethod,
-			zIndex: 999,
-			// loader: "spinner",
-			width: 64,
-			height: 64,
-			opacity: 0.5,
-		},
-		{
-			// Pass slots by their names
-			default: () => h(LoadingCustom),
-		}
-	);
-	$loading.show({
-		// Optional parameters
-	});
-
-	// toast.value.show();
-});
+// 	// toast.value.show();
+// });
 
 // export default {
 // 	data() {
@@ -76,10 +73,9 @@ onMounted(() => {
 <template>
 	<div class="app">
 		<h2>後台管理頁面</h2>
-		<div ref="pageLoading">
-			<!-- <LoadingCustom slot="default" /> -->
-		</div>
-		<Toast />
+		<!-- <div ref="pageLoading">
+		</div> -->
+		<!-- <Toast /> -->
 
 		<nav
 			class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap shadow navbar-expand"
@@ -132,8 +128,8 @@ onMounted(() => {
 						</ul>
 					</div>
 				</nav>
-				<div class="col-lg-10 col-md-9 px-4 ccc">
-					<slot />
+				<div class="col-lg-10 col-md-9 px-4">
+					<NuxtPage />
 					<!-- <router-view v-if="checkSuccess"></router-view> -->
 				</div>
 			</div>
