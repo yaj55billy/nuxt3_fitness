@@ -399,7 +399,11 @@ h6 {
 	}
 }
 
-// 表單相關
+// 覆寫 Bs5
 .form-control:focus {
 	box-shadow: 0 0 0 0;
+}
+
+.modal-header .btn-close {
+	background-color: white;
 }
