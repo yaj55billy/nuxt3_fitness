@@ -1,5 +1,6 @@
 <script setup>
 import { useLoading } from "vue-loading-overlay";
+import Pagination from "@/components/Pagination.vue";
 
 // Loading
 const pageLoading = ref(null);
@@ -40,7 +41,6 @@ let headers = {
 const getProducts = (num = 1) => {
 	const loader = $loading.show();
 	const api = `${config.public.apiUrl}/${config.public.uuid}/admin/ec/products`;
-	console.log(token);
 	$fetch(api, {
 		method: "GET",
 		query: { page: num },
@@ -48,7 +48,7 @@ const getProducts = (num = 1) => {
 	})
 		.then((res) => {
 			products.value = res.data;
-			// this.pagination = res.data.meta.pagination;
+			pagination.value = res.meta.pagination;
 		})
 		.finally(() => {
 			loader.hide();
@@ -123,5 +123,6 @@ onMounted(() => {
 				</tr>
 			</tbody>
 		</table>
+		<pagination :pagedata="pagination" @update="getProducts"></pagination>
 	</div>
 </template>
