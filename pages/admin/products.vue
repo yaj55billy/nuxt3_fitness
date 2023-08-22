@@ -1,7 +1,7 @@
 <script setup>
-import Toast from "@/components/Toast.vue";
-import { useToastStore } from "@/stores/useToast.js";
-const store = useToastStore();
+// import Toast from "@/components/Toast.vue";
+// import { useToastStore } from "@/stores/useToast.js";
+// const store = useToastStore();
 
 definePageMeta({
 	layout: false,
@@ -27,7 +27,6 @@ onMounted(() => {
 </script>
 
 <template>
-	<Toast />
 	<div class="mt-4">
 		<!-- <loading :active.sync="isLoading"></loading> -->
 		<h2>產品列表</h2>

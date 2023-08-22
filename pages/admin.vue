@@ -1,81 +1,58 @@
 <script setup>
-// import { h } from "vue";
-// // import Toasts from "@/components/Toast";
-// import { useLoading } from "vue-loading-overlay";
-// import LoadingCustom from "@/components/LoadingCustom";
+import Toast from "@/components/Toast";
 
-// const pageLoading = ref(null);
+// 取 .env
+const config = useRuntimeConfig();
 
-// onMounted(() => {
-// 	const $loading = useLoading(
-// 		{
-// 			container: pageLoading.value,
-// 			canCancel: true, // default false
-// 			// onCancel: this.yourCallbackMethod,
-// 			zIndex: 999,
-// 			// loader: "spinner",
-// 			width: 64,
-// 			height: 64,
-// 			opacity: 0.5,
-// 		},
-// 		{
-// 			// Pass slots by their names
-// 			default: () => h(LoadingCustom),
-// 		}
-// 	);
-// 	$loading.show({
-// 		// Optional parameters
-// 	});
+// toast store
+import { useToastStore } from "@/stores/useToast.js";
+const store = useToastStore();
 
-// 	// toast.value.show();
-// });
+// router
+const router = useRouter();
 
-// export default {
-// 	data() {
-// 		return {
-// 			token: "",
-// 			checkSuccess: false,
-// 		};
-// 	},
-// 	created() {
-// 		this.checkLogin();
-// 	},
-// 	methods: {
-// 		checkLogin() {
-// 			// 確認是否是有 token (登入)
-// 			this.token = document.cookie.replace(
-// 				/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/,
-// 				"$1"
-// 			);
-// 			const api = `${process.env.VUE_APP_APIPATH}/auth/check`;
-// 			this.axios
-// 				.post(api, {
-// 					api_token: this.token,
-// 				})
-// 				.then(() => {
-// 					this.checkSuccess = true;
-// 					this.axios.defaults.headers.common.Authorization = `Bearer ${this.token}`;
-// 				})
-// 				.catch(() => {
-// 					this.$router.push("/login");
-// 				});
-// 		},
-// 		signout() {
-// 			// 登出
-// 			document.cookie = "token=; expires=; path=/";
-// 			this.$bus.$emit("notice-user", "您已登出~~");
-// 			this.$router.push("/");
-// 		},
-// 	},
-// };
+const token = ref("");
+const checkSuccess = ref(false);
+const checkLogin = () => {
+	token.value = document.cookie.replace(
+		/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/,
+		"$1"
+	);
+	const api = `${config.public.apiUrl}/auth/check`;
+	$fetch(api, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${token.value}`,
+		},
+		body: {
+			api_token: token.value,
+		},
+	})
+		.then((res) => {
+			checkSuccess.value = true;
+		})
+		.catch(() => {
+			router.push("/login");
+		});
+};
+
+const signout = () => {
+	document.cookie = "token=; expires=; path=/";
+	store.messageHandle("您已登出~~");
+	store.isShowHandle();
+	router.push("/");
+};
+
+onMounted(() => {
+	checkLogin();
+});
 </script>
 
 <template>
+	<Toast />
 	<div class="app">
 		<h2>後台管理頁面</h2>
-		<!-- <div ref="pageLoading">
-		</div> -->
-		<!-- <Toast /> -->
 
 		<nav
 			class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap shadow navbar-expand"
@@ -83,7 +60,7 @@
 			<a href="#" class="navbar-brand col-sm-3 col-md-2 mr-0 active text-left"
 				>後台管理頁面</a
 			>
-			<div class="ml-auto">
+			<div class="ms-auto">
 				<ul class="navbar-nav px-3">
 					<li class="nav-item text-nowrap">
 						<NuxtLink to="/" class="nav-link active">回首頁</NuxtLink>
@@ -129,19 +106,19 @@
 					</div>
 				</nav>
 				<div class="col-lg-10 col-md-9 px-4">
-					<NuxtPage />
-					<!-- <router-view v-if="checkSuccess"></router-view> -->
+					<NuxtPage v-if="checkSuccess" />
 				</div>
 			</div>
 		</div>
 	</div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .nav {
 	.nav-item {
 		width: 100%;
 		text-align: left;
+		font-weight: 500;
 		@media (max-width: 767px) {
 			width: 25%;
 			text-align: center;
