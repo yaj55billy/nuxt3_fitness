@@ -45,6 +45,11 @@ const signin = async () => {
 
 	$fetch(api, {
 		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			Accept: "application/json",
+			Authorization: `Bearer ${token.value}`,
+		},
 		body: user.value,
 	})
 		.then((res) => {

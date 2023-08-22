@@ -1,6 +1,11 @@
 <script setup>
 import Toast from "@/components/Toast";
 
+// layout default false
+definePageMeta({
+	layout: false,
+});
+
 // 取 .env
 const config = useRuntimeConfig();
 
@@ -23,6 +28,7 @@ const checkLogin = () => {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
+			Accept: "application/json",
 			Authorization: `Bearer ${token.value}`,
 		},
 		body: {
@@ -38,10 +44,24 @@ const checkLogin = () => {
 };
 
 const signout = () => {
-	document.cookie = "token=; expires=; path=/";
-	store.messageHandle("您已登出~~");
-	store.isShowHandle();
-	router.push("/");
+	const api = `${config.public.apiUrl}/auth/logout`;
+
+	$fetch(api, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			Accept: "application/json",
+			Authorization: `Bearer ${token.value}`,
+		},
+		body: {
+			api_token: token.value,
+		},
+	}).then((res) => {
+		document.cookie = "token=; expires=; path=/";
+		store.messageHandle(res.message);
+		store.isShowHandle();
+		router.push("/");
+	});
 };
 
 onMounted(() => {
@@ -51,6 +71,7 @@ onMounted(() => {
 
 <template>
 	<Toast />
+	<div ref="pageLoading"></div>
 	<div class="app">
 		<h2>後台管理頁面</h2>
 

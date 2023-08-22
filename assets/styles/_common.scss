@@ -315,6 +315,10 @@ h6 {
 		vertical-align: middle;
 		padding: 0.6rem;
 	}
+	th {
+		border-top: solid 1px $gray-300;
+		border-bottom: solid 2px $gray-300;
+	}
 	tbody {
 		tr {
 			&:nth-child(odd) {
@@ -341,6 +345,7 @@ h6 {
 		th,
 		td {
 			border-top: none;
+			border-bottom: none;
 		}
 		td {
 			display: block;
