@@ -21,9 +21,8 @@ const products = ref([]);
 onMounted(() => {
 	// products
 	// getProducts();
-
-	store.messageHandle("檔案上傳失敗，請再檢查是不是檔案大小超過 2MB");
-	store.isShowHandle();
+	// store.messageHandle("檔案上傳失敗，請再檢查是不是檔案大小超過 2MB");
+	// store.isShowHandle();
 });
 </script>
 

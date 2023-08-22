@@ -1,12 +1,22 @@
 <script setup>
 import { h } from "vue";
 import { useLoading } from "vue-loading-overlay";
+
+// component
 import LoadingCustom from "@/components/LoadingCustom";
+import Toast from "@/components/Toast";
+
+// toast store
+import { useToastStore } from "@/stores/useToast.js";
+const store = useToastStore();
 
 // layout cancel
 definePageMeta({
 	layout: false,
 });
+
+// router
+const router = useRouter();
 
 // Loading
 const pageLoading = ref(null);
@@ -43,13 +53,13 @@ const signin = async () => {
 			document.cookie = `token=${token}; expires=${new Date(
 				expired * 1000
 			)}; path=/`;
-			console.log("登入成功");
-			// 					this.$bus.$emit("notice-user", "登入成功~~");
-			// 					this.$router.push("/admin/products");
+			store.messageHandle("登入成功~~");
+			store.isShowHandle();
+			router.push("/admin/products");
 		})
 		.catch(() => {
-			// 					this.$bus.$emit("notice-user", "登入失敗，請再檢查帳密");
-			console.log("登入失敗");
+			store.messageHandle("登入失敗，請再檢查帳密!");
+			store.isShowHandle();
 		})
 		.finally(() => {
 			loader.hide();
@@ -58,8 +68,9 @@ const signin = async () => {
 </script>
 
 <template>
+	<Toast />
+	<div ref="pageLoading"></div>
 	<div class="login-page">
-		<div ref="pageLoading"></div>
 		<form class="form-signin" @submit.prevent="signin">
 			<h1 class="h3 mb-3 font-weight-normal">請先登入</h1>
 			<div class="form-group">
