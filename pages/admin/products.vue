@@ -90,6 +90,7 @@ const openModal = (status, item) => {
 			method: "GET",
 			headers: headers,
 		}).then((res) => {
+			console.log(res.data);
 			tempProduct.value = res.data;
 			status === "edit"
 				? productModalHandle.show() // 編輯
@@ -103,13 +104,13 @@ const updateData = () => {
 	const loader = $loading.show();
 
 	let api = `${config.public.apiUrl}/${config.public.uuid}/admin/ec/product`,
-		httpMethod = "post",
+		httpMethod = "POST",
 		successText = "產品新增成功",
 		failText = "產品新增失敗，請再檢查看看";
 
 	if (tempProduct.value.id) {
 		api = `${config.public.apiUrl}/${config.public.uuid}/admin/ec/product/${tempProduct.value.id}`;
-		httpMethod = "patch";
+		httpMethod = "PATCH";
 		successText = "產品編輯成功";
 		failText = "產品編輯失敗，請再檢查看看";
 	}
@@ -134,42 +135,66 @@ const updateData = () => {
 		});
 };
 
-// deleteProduct() {
-//       this.isLoading = true;
-//       const url = `${process.env.VUE_APP_APIPATH}/${process.env.VUE_APP_UUID}/admin/ec/product/${this.tempProduct.id}`;
-//       this.axios.delete(url).then(() => {
-//         $('#delProductModal').modal('hide');
-//         this.$bus.$emit('notice-user', '產品已刪除');
-//         this.isLoading = false;
-//         this.getProducts();
-//       }).catch(() => {
-//         this.isLoading = false;
-//         $('#delProductModal').modal('hide');
-//         this.$bus.$emit('notice-user', '產品刪除失敗，請再檢查看看');
-//       });
-//     }
-// uploadFile() { // 上傳圖片
-//   this.fileUpLoading = true;
-//   const catchFile = document.querySelector('#customFile').files[0];
-//   const formData = new FormData();
-//   formData.append('file', catchFile);
-//   const url = `${process.env.VUE_APP_APIPATH}/${process.env.VUE_APP_UUID}/admin/storage`;
-//   this.axios.post(url, formData, {
-//     header: {
-//       'Content-Type': 'multipart/form-data',
-//     },
-//   }).then((res) => {
-//     this.fileUpLoading = false;
-//     if (res.status === 200) {
-//       this.tempProduct.imageUrl.push(res.data.data.path);
-//     }
-//     document.querySelector('#customFile').value = '';
-//   })
-//     .catch(() => {
-//       this.$bus.$emit('notice-user', '檔案上傳失敗，請再檢查是不是檔案大小超過 2MB');
-//       this.fileUpLoading = false;
-//     });
-// },
+const deleteProduct = () => {
+	const loader = $loading.show();
+	const api = `${config.public.apiUrl}/${config.public.uuid}/admin/ec/product/${tempProduct.value.id}`;
+	$fetch(api, {
+		method: "DELETE",
+		headers: headers,
+	})
+		.then((res) => {
+			store.messageHandle("產品已刪除");
+			store.isShowHandle();
+			getProducts();
+		})
+		.catch(() => {
+			store.messageHandle("產品刪除失敗，請再檢查看看");
+			store.isShowHandle();
+		})
+		.finally(() => {
+			delProductModalHandle.hide();
+			loader.hide();
+		});
+};
+
+const customFile = ref(null);
+// 上傳圖片
+const uploadFile = (e) => {
+	fileUpLoading.value = true;
+	// const catchFile = customFile.value.files[0];
+	// const catchFile = document.querySelector("#customFile").files[0];
+	// const catchFile = e.target.files[0];
+
+	let formData = new FormData();
+	formData.append("file", e.target.files[0]);
+
+	headers = {
+		Accept: "application/json",
+		Authorization: `Bearer ${token.value}`,
+	};
+
+	const api = `${config.public.apiUrl}/${config.public.uuid}/admin/storage`;
+
+	$fetch(api, {
+		method: "POST",
+		headers: headers,
+		body: formData,
+	})
+		.then((res) => {
+			console.log(res);
+			if (res.status === 200) {
+				console.log(res.data);
+				// tempProduct.value.imageUrl.push(res.data.path);
+			}
+			document.querySelector("#customFile").value = "";
+			fileUpLoading.value = false;
+		})
+		.catch(() => {
+			store.messageHandle("檔案上傳失敗，請再檢查是不是檔案大小超過 2MB");
+			store.isShowHandle();
+			fileUpLoading.value = false;
+		});
+};
 
 onMounted(() => {
 	getProducts();
@@ -282,6 +307,7 @@ onMounted(() => {
 										type="file"
 										class="form-control h-auto"
 										id="customFile"
+										ref="customFile"
 										@change="uploadFile"
 									/>
 								</div>

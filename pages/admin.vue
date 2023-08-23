@@ -57,9 +57,9 @@ const signout = () => {
 			api_token: token.value,
 		},
 	}).then((res) => {
-		document.cookie = "token=; expires=; path=/";
 		store.messageHandle(res.message);
 		store.isShowHandle();
+		document.cookie = "token=; expires=; path=/";
 		router.push("/");
 	});
 };
