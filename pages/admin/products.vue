@@ -32,6 +32,7 @@ const productModal = ref(null);
 const delProductModal = ref(null);
 let productModalHandle;
 let delProductModalHandle;
+const customFile = ref(null);
 
 // about api
 const token = ref("");
@@ -65,15 +66,6 @@ const getProducts = (num = 1) => {
 	tempProduct.value = {
 		imageUrl: [],
 	};
-	// if (this.tempProduct.id) {
-	// 	this.tempProduct = {
-	// 		imageUrl: [],
-	// 	};
-	// } else {
-	// 	this.tempProduct = {
-	// 		imageUrl: [],
-	// 	};
-	// }
 };
 
 const openModal = (status, item) => {
@@ -157,16 +149,13 @@ const deleteProduct = () => {
 		});
 };
 
-const customFile = ref(null);
 // 上傳圖片
-const uploadFile = (e) => {
+const uploadFile = () => {
 	fileUpLoading.value = true;
-	// const catchFile = customFile.value.files[0];
-	// const catchFile = document.querySelector("#customFile").files[0];
-	// const catchFile = e.target.files[0];
+	const catchFile = customFile.value.files[0];
 
-	let formData = new FormData();
-	formData.append("file", e.target.files[0]);
+	const formData = new FormData();
+	formData.append("file", catchFile);
 
 	headers = {
 		Accept: "application/json",
@@ -181,17 +170,14 @@ const uploadFile = (e) => {
 		body: formData,
 	})
 		.then((res) => {
-			console.log(res);
-			if (res.status === 200) {
-				console.log(res.data);
-				// tempProduct.value.imageUrl.push(res.data.path);
-			}
-			document.querySelector("#customFile").value = "";
-			fileUpLoading.value = false;
+			tempProduct.value.imageUrl.push(res.data.path);
+			customFile.value.value = "";
 		})
 		.catch(() => {
 			store.messageHandle("檔案上傳失敗，請再檢查是不是檔案大小超過 2MB");
 			store.isShowHandle();
+		})
+		.finally(() => {
 			fileUpLoading.value = false;
 		});
 };
@@ -282,7 +268,7 @@ onMounted(() => {
 					</div>
 					<div class="modal-body text-left">
 						<div class="row">
-							<div class="col-sm-4">
+							<div class="col-sm-4 mb-4">
 								<div v-for="item in 3" :key="item + 'img'" class="form-group">
 									<label :for="'imageUrl_' + (item - 1)">輸入圖片網址</label>
 									<input
@@ -294,7 +280,7 @@ onMounted(() => {
 									/>
 								</div>
 								<div class="form-group">
-									上傳圖片
+									<label for="customFile">上傳圖片</label>
 									<div
 										class="spinner-border text-primary"
 										role="status"
@@ -315,7 +301,7 @@ onMounted(() => {
 									<img
 										class="img-fluid"
 										:src="tempProduct.imageUrl[item - 1]"
-										:alt="'課程示意: ' + tempProduct.title"
+										:alt="'上傳縮圖處'"
 									/>
 								</div>
 							</div>
@@ -330,7 +316,7 @@ onMounted(() => {
 										placeholder="請輸入標題"
 									/>
 								</div>
-								<div class="form-row">
+								<div class="row">
 									<div class="form-group col-md-6">
 										<label for="category">分類</label>
 										<input
@@ -352,7 +338,7 @@ onMounted(() => {
 										/>
 									</div>
 								</div>
-								<div class="form-row">
+								<div class="row">
 									<div class="form-group col-md-6">
 										<label for="origin_price">原價</label>
 										<input
