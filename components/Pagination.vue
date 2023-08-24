@@ -37,7 +37,7 @@ const nowPage = (num) => {
 				</a>
 			</li>
 			<li
-				class="page-item mx-2"
+				class="page-item ms-2"
 				v-for="item in pagedata.total_pages"
 				:key="item"
 				:class="{ active: item === pagedata.current_page }"
@@ -47,7 +47,7 @@ const nowPage = (num) => {
 				</a>
 			</li>
 			<li
-				class="page-item"
+				class="page-item ms-2"
 				:disabled="pagedata.current_page === pagedata.total_pages"
 				:class="{ disabled: pagedata.current_page === pagedata.total_pages }"
 			>
