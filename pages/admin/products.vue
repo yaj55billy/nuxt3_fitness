@@ -1,6 +1,7 @@
 <script setup>
 import { useLoading } from "vue-loading-overlay";
 import Pagination from "@/components/Pagination.vue";
+import { useToastStore } from "@/stores/useToast.js";
 
 // bootstrap js
 const { $bootstrap } = useNuxtApp();
@@ -10,12 +11,11 @@ const pageLoading = ref(null);
 
 const $loading = useLoading({
 	container: pageLoading.value,
-	zIndex: 999,
+	zIndex: 1200,
 	opacity: 0.4,
 });
 
 // toast store
-import { useToastStore } from "@/stores/useToast.js";
 const store = useToastStore();
 
 // 取 .env

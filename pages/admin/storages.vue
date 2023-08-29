@@ -1,6 +1,7 @@
 <script setup>
 import { useLoading } from "vue-loading-overlay";
 import Pagination from "@/components/Pagination.vue";
+import { useToastStore } from "@/stores/useToast.js";
 
 // bootstrap js
 const { $bootstrap } = useNuxtApp();
@@ -10,12 +11,16 @@ const pageLoading = ref(null);
 
 const $loading = useLoading({
 	container: pageLoading.value,
-	zIndex: 999,
+	zIndex: 1200,
 	opacity: 0.4,
 });
 
 // 取 .env
 const config = useRuntimeConfig();
+
+// toast store
+
+const store = useToastStore();
 
 // 資料定義
 const storages = ref([]);
@@ -62,6 +67,29 @@ const openDelModal = (item) => {
 	delStorageModalHandle.show();
 };
 
+const deleteStorage = (id) => {
+	const loader = $loading.show();
+	const api = `${config.public.apiUrl}/${config.public.uuid}/admin/storage/${id}`;
+
+	$fetch(api, {
+		method: "DELETE",
+		headers: headers,
+	})
+		.then(() => {
+			delStorageModalHandle.hide();
+			store.messageHandle("圖片刪除成功~~");
+			store.isShowHandle();
+			loader.hide();
+			getData();
+		})
+		.catch(() => {
+			delStorageModalHandle.hide();
+			store.messageHandle("圖片刪除失敗，請再檢查看看");
+			store.isShowHandle();
+			loader.hide();
+		});
+};
+
 onMounted(() => {
 	getData();
 	delStorageModalHandle = new $bootstrap.Modal(delStorageModal.value, {});
@@ -69,7 +97,7 @@ onMounted(() => {
 </script>
 
 <template>
-	<div ref="pageLoading"></div>
+	<div ref="pageLoading" class="pre"></div>
 	<div class="mt-4">
 		<h2 class="mt-sm-5 mt-4">圖片列表</h2>
 		<table class="table table-admin mt-4">
