@@ -113,7 +113,7 @@ nowProducts.value = productsData.value.data;
 								</div>
 							</div>
 						</div>
-						<!-- <NuxtLink :to="`/product/${item.id}`" class="prod-link"> </NuxtLink> -->
+						<NuxtLink :to="`/product/${item.id}`" class="prod-link"> </NuxtLink>
 					</div>
 				</div>
 			</div>
