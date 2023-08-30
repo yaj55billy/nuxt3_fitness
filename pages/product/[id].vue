@@ -1,5 +1,4 @@
 <script setup>
-// import { useLoading } from "vue-loading-overlay";
 import LoadingCustom from "@/components/LoadingCustom.vue";
 import { useToastStore } from "@/stores/useToast.js";
 
@@ -22,35 +21,76 @@ const relatedProducts = ref([]);
 const { id } = route.params;
 const api = `${config.public.apiUrl}/${config.public.uuid}/ec/product/${id}`;
 
-const { data, pending } = await useLazyFetch(api);
-
+const { data, pending } = await useLazyFetch(api, {
+	onRequestError({ request, options, error }) {
+		// Handle the request errors
+		console.log(error);
+	},
+	onResponseError({ request, response, options }) {
+		// Handle the response errors
+		console.log("error");
+		store.messageHandle("有錯誤");
+		store.isShowHandle();
+	},
+});
 product.value = data.data;
-// console.log(data);
+// getRelatedProducts();
+// if (product.value.category === "體驗課程") {
+// 	classMax.value = 1;
+// }
 
-//   .then((res) => {
-//     this.product = res.data.data;
-//     this.isLoading = false;
-//     this.getRelatedProducts();
-//     if (this.product.category === "體驗課程") {
-//       this.classMax = 1;
-//     }
-//   })
 //   .catch((error) => {
 //     this.$bus.$emit("notice-user", error.response.data.errors[0]);
 //     this.isLoading = false;
 //   });
 
-onMounted(() => {
-	// getProduct();
-	// Loading
-	// const pageLoading = ref(null);
-	// const $loading = useLoading({
-	// 	container: pageLoading.value,
-	// 	zIndex: 1200,
-	// 	opacity: 0.4,
-	// });
-	// loader = $loading.show();
-});
+// const getRelatedProducts = () => {
+
+// }
+
+// getRelatedProducts() {
+//  this.isLoading = true;
+//  const url = `${process.env.VUE_APP_APIPATH}/${process.env.VUE_APP_UUID}/ec/products`;
+//  this.relatedProducts = [];
+//  this.axios.get(url).then((res) => {
+//   res.data.data.filter((item) => {
+//    if (
+//     item.category === this.product.category &&
+//     item.title !== this.product.title
+//    ) {
+//     this.relatedProducts.push(item);
+//    }
+//    return item;
+//   });
+//   this.isLoading = false;
+//  });
+// },
+// addToCart(id, quantity = 1) {
+//  const url = `${process.env.VUE_APP_APIPATH}/${process.env.VUE_APP_UUID}/ec/shopping`;
+//  const cart = {
+//   product: id,
+//   quantity,
+//  };
+//  this.isLoading = true;
+//  this.axios
+//   .post(url, cart)
+//   .then(() => {
+//    this.$bus.$emit("notice-user", "商品已成功加入購物車");
+//    this.$bus.$emit("cart-num", "");
+//    this.isLoading = false;
+//   })
+//   .catch((error) => {
+//    this.$bus.$emit("notice-user", error.response.data.errors[0]);
+//    this.$bus.$emit("cart-num", "");
+//    this.isLoading = false;
+//   });
+// },
+// goOtherPage(id) {
+//  this.$router.push(`/product/${id}`);
+//  this.getProduct();
+// },
+
+onMounted(() => {});
 </script>
 
 <template>
