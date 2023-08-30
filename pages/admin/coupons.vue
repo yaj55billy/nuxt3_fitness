@@ -254,12 +254,10 @@ onMounted(() => {
 						</h5>
 						<button
 							type="button"
-							class="close"
-							data-dismiss="modal"
+							class="btn-close white"
+							data-bs-dismiss="modal"
 							aria-label="Close"
-						>
-							<span aria-hidden="true">&times;</span>
-						</button>
+						></button>
 					</div>
 					<div class="modal-body text-left">
 						<div class="row">
@@ -333,7 +331,7 @@ onMounted(() => {
 						<button
 							type="button"
 							class="btn btn-outline-secondary"
-							data-dismiss="modal"
+							data-bs-dismiss="modal"
 						>
 							取消
 						</button>
@@ -361,12 +359,10 @@ onMounted(() => {
 						</h5>
 						<button
 							type="button"
-							class="close"
-							data-dismiss="modal"
+							class="btn-close white"
+							data-bs-dismiss="modal"
 							aria-label="Close"
-						>
-							<span aria-hidden="true">&times;</span>
-						</button>
+						></button>
 					</div>
 					<div class="modal-body">
 						是否刪除
@@ -377,7 +373,7 @@ onMounted(() => {
 						<button
 							type="button"
 							class="btn btn-outline-secondary"
-							data-dismiss="modal"
+							data-bs-dismiss="modal"
 						>
 							取消
 						</button>
