@@ -1,54 +1,87 @@
 <script setup>
-// export default {
-// 	data() {
-// 		return {
-// 			token: "",
-// 			checkSuccess: false,
-// 		};
-// 	},
-// 	created() {
-// 		this.checkLogin();
-// 	},
-// 	methods: {
-// 		checkLogin() {
-// 			// 確認是否是有 token (登入)
-// 			this.token = document.cookie.replace(
-// 				/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/,
-// 				"$1"
-// 			);
-// 			const api = `${process.env.VUE_APP_APIPATH}/auth/check`;
-// 			this.axios
-// 				.post(api, {
-// 					api_token: this.token,
-// 				})
-// 				.then(() => {
-// 					this.checkSuccess = true;
-// 					this.axios.defaults.headers.common.Authorization = `Bearer ${this.token}`;
-// 				})
-// 				.catch(() => {
-// 					this.$router.push("/login");
-// 				});
-// 		},
-// 		signout() {
-// 			// 登出
-// 			document.cookie = "token=; expires=; path=/";
-// 			this.$bus.$emit("notice-user", "您已登出~~");
-// 			this.$router.push("/");
-// 		},
-// 	},
-// };
+import Toast from "@/components/Toast";
+
+// layout default false
+definePageMeta({
+	layout: false,
+});
+
+// 取 .env
+const config = useRuntimeConfig();
+
+// toast store
+import { useToastStore } from "@/stores/useToast.js";
+const store = useToastStore();
+
+// router
+const router = useRouter();
+
+const token = ref("");
+const checkSuccess = ref(false);
+const checkLogin = () => {
+	token.value = document.cookie.replace(
+		/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/,
+		"$1"
+	);
+	const api = `${config.public.apiUrl}/auth/check`;
+	$fetch(api, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			Accept: "application/json",
+			Authorization: `Bearer ${token.value}`,
+		},
+		body: {
+			api_token: token.value,
+		},
+	})
+		.then((res) => {
+			checkSuccess.value = true;
+		})
+		.catch(() => {
+			router.push("/login");
+		});
+};
+
+const signout = () => {
+	const api = `${config.public.apiUrl}/auth/logout`;
+
+	$fetch(api, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			Accept: "application/json",
+			Authorization: `Bearer ${token.value}`,
+		},
+		body: {
+			api_token: token.value,
+		},
+	}).then((res) => {
+		store.messageHandle(res.message);
+		store.isShowHandle();
+		document.cookie = "token=; expires=; path=/";
+		router.push("/");
+	});
+};
+
+onMounted(() => {
+	checkLogin();
+});
 </script>
 
 <template>
+	<Toast />
+	<div ref="pageLoading"></div>
 	<div class="app">
 		<h2>後台管理頁面</h2>
+
 		<nav
 			class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap shadow navbar-expand"
 		>
 			<a href="#" class="navbar-brand col-sm-3 col-md-2 mr-0 active text-left"
 				>後台管理頁面</a
 			>
-			<div class="ml-auto">
+			<div class="ms-auto">
 				<ul class="navbar-nav px-3">
 					<li class="nav-item text-nowrap">
 						<NuxtLink to="/" class="nav-link active">回首頁</NuxtLink>
@@ -94,19 +127,19 @@
 					</div>
 				</nav>
 				<div class="col-lg-10 col-md-9 px-4">
-					<slot />
-					<!-- <router-view v-if="checkSuccess"></router-view> -->
+					<NuxtPage v-if="checkSuccess" />
 				</div>
 			</div>
 		</div>
 	</div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .nav {
 	.nav-item {
 		width: 100%;
 		text-align: left;
+		font-weight: 500;
 		@media (max-width: 767px) {
 			width: 25%;
 			text-align: center;

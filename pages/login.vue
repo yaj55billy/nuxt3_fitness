@@ -1,49 +1,81 @@
-<script>
-export default {
-	data() {
-		return {
-			user: {
-				email: "",
-				password: "",
-			},
-			token: "",
-			isLoading: false,
-		};
+<script setup>
+import { h } from "vue";
+import { useLoading } from "vue-loading-overlay";
+
+// component
+import LoadingCustom from "@/components/LoadingCustom";
+import Toast from "@/components/Toast";
+
+// toast store
+import { useToastStore } from "@/stores/useToast.js";
+const store = useToastStore();
+
+// layout cancel
+definePageMeta({
+	layout: false,
+});
+
+// router
+const router = useRouter();
+
+// Loading
+const pageLoading = ref(null);
+
+const $loading = useLoading(
+	{
+		container: pageLoading.value,
+		zIndex: 999,
+		opacity: 0.4,
 	},
-	methods: {
-		signin() {
-			this.isLoading = true;
-			const api = `${process.env.VUE_APP_APIPATH}/auth/login`;
-			this.axios
-				.post(api, this.user)
-				.then((res) => {
-					this.isLoading = false;
-					const { token } = res.data;
-					const { expired } = res.data;
-					document.cookie = `token=${token}; expires=${new Date(
-						expired * 1000
-					)}; path=/`;
-					this.$bus.$emit("notice-user", "登入成功~~");
-					this.$router.push("/admin/products");
-				})
-				.catch(() => {
-					this.isLoading = false;
-					this.$bus.$emit("notice-user", "登入失敗，請再檢查帳密");
-				});
+	{
+		default: () => h(LoadingCustom),
+	}
+);
+
+// 取 .env
+const config = useRuntimeConfig();
+
+// 資料定義
+const user = ref({ email: "", password: "" });
+const token = ref("");
+
+const signin = async () => {
+	const loader = $loading.show();
+	const api = `${config.public.apiUrl}/auth/login`;
+
+	$fetch(api, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			Accept: "application/json",
+			Authorization: `Bearer ${token.value}`,
 		},
-	},
+		body: user.value,
+	})
+		.then((res) => {
+			const { token } = res;
+			const { expired } = res;
+			document.cookie = `token=${token}; expires=${new Date(
+				expired * 1000
+			)}; path=/`;
+			store.messageHandle("登入成功~~");
+			store.isShowHandle();
+			router.push("/admin/products");
+		})
+		.catch(() => {
+			store.messageHandle("登入失敗，請再檢查帳密!");
+			store.isShowHandle();
+		})
+		.finally(() => {
+			loader.hide();
+		});
 };
 </script>
 
 <template>
+	<Toast />
+	<div ref="pageLoading"></div>
 	<div class="login-page">
-		<!-- <loading :active.sync="isLoading">
-			<div class="loadingio-spinner-ball-h1u60i2wsu">
-				<div class="ldio-ivekc1fyg2">
-					<div></div>
-				</div>
-			</div>
-		</loading> -->
 		<form class="form-signin" @submit.prevent="signin">
 			<h1 class="h3 mb-3 font-weight-normal">請先登入</h1>
 			<div class="form-group">
@@ -58,7 +90,7 @@ export default {
 					autofocus
 				/>
 			</div>
-			<div class="form-group">
+			<div class="form-group mt-3">
 				<label for="inputPassword" class="sr-only">Password</label>
 				<input
 					id="inputPassword"
@@ -69,14 +101,14 @@ export default {
 					required
 				/>
 			</div>
-			<button class="btn btn-lg btn-primary btn-block" type="submit">
+			<button class="btn btn-lg btn-primary d-block w-100 mt-3" type="submit">
 				登入
 			</button>
 		</form>
 	</div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .login-page {
 	height: 100vh;
 	display: flex;

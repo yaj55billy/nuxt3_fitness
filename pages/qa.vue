@@ -1,7 +1,7 @@
 <script setup></script>
 
 <template>
-	<PageBanner :text="'關於我們'" />
+	<PageBanner :text="'常見問題'" />
 	<div class="mt-6 mb-6">
 		<div class="container">
 			<h2 class="home-title">常見問題</h2>

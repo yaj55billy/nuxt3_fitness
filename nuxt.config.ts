@@ -1,5 +1,11 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  "runtimeConfig": {
+    "public": {
+      "uuid": '',
+      "apiUrl": '',
+    }
+  }, 
   app: {
     head: {
       link: [
@@ -13,6 +19,7 @@ export default defineNuxtConfig({
       ]
     }
   },
+
   devtools: { enabled: true },
   css: [
     // 'bootstrap/scss/bootstrap.scss',
