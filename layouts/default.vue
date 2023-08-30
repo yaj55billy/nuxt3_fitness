@@ -1,10 +1,21 @@
-<script lang="ts" setup>
+<script setup>
 import Toast from "@/components/Toast.vue";
+import LoadingCustom from "@/components/LoadingCustom.vue";
+
+const nuxtApp = useNuxtApp();
+const isLoading = ref(false);
+nuxtApp.hook("page:start", () => {
+	isLoading.value = true;
+});
+nuxtApp.hook("page:finish", () => {
+	isLoading.value = false;
+});
 </script>
 
 <template>
 	<Toast />
 	<div class="app">
+		<LoadingCustom v-show="isLoading"></LoadingCustom>
 		<Navbar />
 		<slot />
 		<Footer />

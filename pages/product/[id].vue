@@ -1,6 +1,6 @@
 <script setup>
-import { useLoading } from "vue-loading-overlay";
-// import LoadingCustom from "@/components/LoadingCustom.vue";
+// import { useLoading } from "vue-loading-overlay";
+import LoadingCustom from "@/components/LoadingCustom.vue";
 import { useToastStore } from "@/stores/useToast.js";
 
 // route
@@ -18,18 +18,14 @@ const classMax = ref(36);
 const product = ref([]);
 const relatedProducts = ref([]);
 
-// let loader;
-
 // api
-// const loader = $loading.show(); 為何這個錯誤？
 const { id } = route.params;
 const api = `${config.public.apiUrl}/${config.public.uuid}/ec/product/${id}`;
 
-const { data, pending } = await useFetch(api);
+const { data, pending } = await useLazyFetch(api);
+
+product.value = data.data;
 // console.log(data);
-// if (pending) {
-// 	loader.hide();
-// }
 
 //   .then((res) => {
 //     this.product = res.data.data;
@@ -59,17 +55,11 @@ onMounted(() => {
 
 <template>
 	<div>
-		<!-- <LoadingCustom></LoadingCustom> -->
-		<!-- <div ref="pageLoading"></div> -->
-		<!-- <loading :active.sync="isLoading">
-      <div class="loadingio-spinner-ball-h1u60i2wsu">
-        <div class="ldio-ivekc1fyg2">
-          <div></div>
-        </div>
-      </div>
-    </loading> -->
-		<div class="container prod-detail">
-			TEST
+		<LoadingCustom v-if="pending"></LoadingCustom>
+
+		<div v-else class="container prod-detail">
+			ccccc
+			<!-- TEST -->
 			<!-- <div class="row align-items-start">
 				<div class="col-md-6">
 					<div

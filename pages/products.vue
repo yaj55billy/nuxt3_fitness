@@ -19,10 +19,10 @@
 const config = useRuntimeConfig(); // 取 .env
 const url = `${config.public.apiUrl}/${config.public.uuid}/ec/products?page=1`;
 
-console.log(url);
+// console.log(url);
 
 const { data: productsData } = await useFetch(url);
-console.log(productsData);
+// console.log(productsData);
 
 const products = ref([]);
 const nowProducts = ref([]);
