@@ -225,7 +225,7 @@ h6 {
 // 按鈕部分 END
 
 // loading
-@keyframes ldio-ivekc1fyg2 {
+@keyframes bounce-ball {
 	0%,
 	100% {
 		animation-timing-function: cubic-bezier(0.45, 0, 0.9, 0.55);
@@ -241,24 +241,31 @@ h6 {
 		transform: translate(0, 0);
 	}
 }
-.ldio-ivekc1fyg2 div {
-	position: absolute;
-	width: 50px;
-	height: 50px;
-	border-radius: 50%;
-	background: lighten(#fdc23e, 12%);
-	left: 74px;
-	top: 20px;
-	animation: ldio-ivekc1fyg2 1.0989010989010988s linear infinite;
+.loading-overlay {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 1200;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.4);
 }
-.loadingio-spinner-ball-h1u60i2wsu {
+.loading-scope {
 	width: 200px;
 	height: 200px;
 	display: inline-block;
 	overflow: hidden;
 	background: transparent;
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	left: 0;
+	right: 0;
+	margin: 0 auto;
 }
-.ldio-ivekc1fyg2 {
+.loading-content {
 	width: 100%;
 	height: 100%;
 	position: relative;
@@ -266,8 +273,16 @@ h6 {
 	backface-visibility: hidden;
 	transform-origin: 0 0;
 }
-.ldio-ivekc1fyg2 div {
+.loading-content .loading-ball {
 	box-sizing: content-box;
+	position: absolute;
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+	background: lighten(#fdc23e, 12%);
+	left: 74px;
+	top: 20px;
+	animation: bounce-ball 1.0989010989010988s linear infinite;
 }
 // loading END
 

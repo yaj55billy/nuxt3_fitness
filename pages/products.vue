@@ -1,53 +1,78 @@
 <script setup>
-/*
-  useFetch 範例
-  const { data, pending, error, refresh } = await useFetch('https://api.nuxtjs.dev/mountains', {
-    query: { param1, param2: 'value2' }
-  })
+import LoadingCustom from "@/components/LoadingCustom.vue";
+import { useToastStore } from "@/stores/useToast.js";
+// toast store
+const store = useToastStore();
 
-  // getProducts(num = 1) {
-  //   this.isLoading = true;
-  //   const url = `${process.env.VUE_APP_APIPATH}/${process.env.VUE_APP_UUID}/ec/products?page=${num}`;
-  //   this.axios.get(url).then((res) => {
-  //     this.products = res.data.data;
-  //     this.nowProducts = res.data.data;
-  //     this.isLoading = false;
-  //   });
-  // }
-*/
+// 取 .env
+const config = useRuntimeConfig();
 
-const config = useRuntimeConfig(); // 取 .env
-const url = `${config.public.apiUrl}/${config.public.uuid}/ec/products?page=1`;
-
-console.log(url);
-
-const { data: productsData } = await useFetch(url);
-console.log(productsData);
-
+// 資料定義
 const products = ref([]);
 const nowProducts = ref([]);
-const nowCategory = ref("");
+const nowCategory = ref("全部課程");
 const isLoading = ref(false);
-// const num = 1;
+const num = ref(1);
 
-products.value = productsData.value.data;
-nowProducts.value = productsData.value.data;
+try {
+	const api = `${config.public.apiUrl}/${config.public.uuid}/ec/products`;
+	const { data: productsData } = await useFetch(api, {
+		method: "GET",
+		query: { page: num },
+	});
+
+	products.value = productsData.value.data;
+	nowProducts.value = productsData.value.data;
+	productHandler();
+} catch (error) {}
+
+const filterNotRepeat = computed(() => {
+	return products.value
+		.map((item) => item.category)
+		.filter((element, index, arr) => arr.indexOf(element) === index);
+});
+
+const productHandler = (catchVal = "全部課程") => {
+	nowProducts.value = [];
+	if (catchVal === "全部課程") {
+		nowCategory.value = catchVal;
+		nowProducts.value = products.value;
+	} else {
+		nowCategory.value = catchVal;
+		nowProducts.value = products.value.filter(
+			(item) => item.category === catchVal
+		);
+	}
+};
+
+const addToCart = (id, quantity = 1) => {
+	isLoading.value = true;
+	const api = `${config.public.apiUrl}/${config.public.uuid}/ec/shopping`;
+	const cart = {
+		product: id,
+		quantity,
+	};
+
+	$fetch(api, {
+		method: "POST",
+		body: cart,
+	})
+		.then(() => {
+			store.messageHandle("商品已成功加入購物車");
+			store.isShowHandle();
+			isLoading.value = false;
+		})
+		.catch((error) => {
+			store.messageHandle(error.response._data.errors[0]);
+			store.isShowHandle();
+			isLoading.value = false;
+		});
+};
 </script>
-<!-- 
-<template>
-	
-	{{ products[0] }}
-	<div v-for="item in products" :key="item.id">{{ item.title }}</div>
-</template> -->
+
 <template>
 	<div>
-		<!-- <loading :active.sync="isLoading">
-      <div class="loadingio-spinner-ball-h1u60i2wsu">
-        <div class="ldio-ivekc1fyg2">
-          <div></div>
-        </div>
-      </div>
-    </loading> -->
+		<LoadingCustom v-if="isLoading" />
 		<PageBanner :text="'課程列表'" />
 		<div class="container prod">
 			<div class="congratulate">
@@ -58,7 +83,7 @@ nowProducts.value = productsData.value.data;
 					折優惠。
 				</p>
 			</div>
-			<!-- <ul class="list-unstyled prod-filter">
+			<ul class="list-unstyled prod-filter">
 				<li class="prod-filter__list">
 					<a
 						href="#"
@@ -82,7 +107,7 @@ nowProducts.value = productsData.value.data;
 						>{{ item }}</a
 					>
 				</li>
-			</ul> -->
+			</ul>
 			<div class="row mt-4">
 				<div
 					class="col-lg-4 col-md-6"
@@ -103,22 +128,20 @@ nowProducts.value = productsData.value.data;
 						<div class="card-body prod-body text-left">
 							<h4 class="mb-0">{{ item.title }}</h4>
 							<p class="text-muted mt-3 prod-content">{{ item.content }}</p>
-							<div class="prod-price">
-								<div class="float-left">
-									<del>NT$ {{ item.origin_price }}</del>
-									<!-- <del>NT${{ item.origin_price | toThousands }}</del> -->
+							<div class="prod-price d-flex">
+								<div class="me-auto">
+									<del v-thousands="`NT$${item.origin_price}`"></del>
 								</div>
-								<div class="float-right prod-price__special">
-									<!-- NT$ {{ item.price }} NT${{ item.price | toThousands }} -->
-								</div>
+								<div
+									class="prod-price__special"
+									v-thousands="`NT$${item.price}`"
+								></div>
 							</div>
 						</div>
-						<!-- <NuxtLink :to="`/product/${item.id}`" class="prod-link"> </NuxtLink> -->
+						<NuxtLink :to="`/product/${item.id}`" class="prod-link"> </NuxtLink>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 </template>
-
-<style></style>

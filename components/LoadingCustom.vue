@@ -1,7 +1,9 @@
 <template>
-	<div class="loadingio-spinner-ball-h1u60i2wsu">
-		<div class="ldio-ivekc1fyg2">
-			<div></div>
+	<div class="loading-overlay">
+		<div class="loading-scope">
+			<div class="loading-content">
+				<div class="loading-ball"></div>
+			</div>
 		</div>
 	</div>
 </template>
