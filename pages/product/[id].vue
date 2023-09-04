@@ -4,6 +4,7 @@ import { useToastStore } from "@/stores/useToast.js";
 
 // route
 const route = useRoute();
+const router = useRouter();
 
 // toast store
 const store = useToastStore();
@@ -14,143 +15,129 @@ const config = useRuntimeConfig();
 // 資料定義
 const classNum = ref(1);
 const classMax = ref(36);
-const product = ref([]);
+const product = ref({});
 const relatedProducts = ref([]);
+const isLoading = ref(false); // api use
 
 // api
-const { id } = route.params;
-const api = `${config.public.apiUrl}/${config.public.uuid}/ec/product/${id}`;
+const getRelatedProducts = () => {
+	const api = `${config.public.apiUrl}/${config.public.uuid}/ec/products`;
+	relatedProducts.value = [];
+	$fetch(api).then((res) => {
+		const resData = res.data;
+		resData.filter((item) => {
+			return item.category === product.value.category &&
+				item.title !== product.value.title
+				? relatedProducts.value.push(item)
+				: "";
+		});
+	});
+};
+try {
+	const { id } = route.params;
+	const api = `${config.public.apiUrl}/${config.public.uuid}/ec/product/${id}`;
 
-const { data, pending } = await useLazyFetch(api, {
-	onRequestError({ request, options, error }) {
-		// Handle the request errors
-		console.log(error);
-	},
-	onResponseError({ request, response, options }) {
-		// Handle the response errors
-		console.log("error");
-		store.messageHandle("有錯誤");
-		store.isShowHandle();
-	},
-});
-product.value = data.data;
-// getRelatedProducts();
-// if (product.value.category === "體驗課程") {
-// 	classMax.value = 1;
-// }
+	const { data: productRes } = await useFetch(api);
+	product.value = productRes.value.data;
+	if (product.value.category === "體驗課程") {
+		classMax.value = 1;
+	}
+	getRelatedProducts();
+} catch (error) {
+	store.messageHandle("Oops...發生了一些錯誤，請稍候重整看看。");
+	store.isShowHandle();
+}
 
-//   .catch((error) => {
-//     this.$bus.$emit("notice-user", error.response.data.errors[0]);
-//     this.isLoading = false;
-//   });
+const goOtherPage = (id) => {
+	router.push(`/product/${id}`);
+};
 
-// const getRelatedProducts = () => {
+const addToCart = (id, quantity = 1) => {
+	isLoading.value = true;
+	const api = `${config.public.apiUrl}/${config.public.uuid}/ec/shopping`;
+	const cart = {
+		product: id,
+		quantity,
+	};
 
-// }
-
-// getRelatedProducts() {
-//  this.isLoading = true;
-//  const url = `${process.env.VUE_APP_APIPATH}/${process.env.VUE_APP_UUID}/ec/products`;
-//  this.relatedProducts = [];
-//  this.axios.get(url).then((res) => {
-//   res.data.data.filter((item) => {
-//    if (
-//     item.category === this.product.category &&
-//     item.title !== this.product.title
-//    ) {
-//     this.relatedProducts.push(item);
-//    }
-//    return item;
-//   });
-//   this.isLoading = false;
-//  });
-// },
-// addToCart(id, quantity = 1) {
-//  const url = `${process.env.VUE_APP_APIPATH}/${process.env.VUE_APP_UUID}/ec/shopping`;
-//  const cart = {
-//   product: id,
-//   quantity,
-//  };
-//  this.isLoading = true;
-//  this.axios
-//   .post(url, cart)
-//   .then(() => {
-//    this.$bus.$emit("notice-user", "商品已成功加入購物車");
-//    this.$bus.$emit("cart-num", "");
-//    this.isLoading = false;
-//   })
-//   .catch((error) => {
-//    this.$bus.$emit("notice-user", error.response.data.errors[0]);
-//    this.$bus.$emit("cart-num", "");
-//    this.isLoading = false;
-//   });
-// },
-// goOtherPage(id) {
-//  this.$router.push(`/product/${id}`);
-//  this.getProduct();
-// },
-
-onMounted(() => {});
+	$fetch(api, {
+		method: "POST",
+		body: cart,
+	})
+		.then(() => {
+			store.messageHandle("商品已成功加入購物車");
+			store.isShowHandle();
+			isLoading.value = false;
+		})
+		.catch((error) => {
+			store.messageHandle(error.response._data.errors[0]);
+			store.isShowHandle();
+			isLoading.value = false;
+		});
+};
 </script>
 
 <template>
 	<div>
-		<LoadingCustom v-if="pending"></LoadingCustom>
-
-		<div v-else class="container prod-detail">
-			ccccc
-			<!-- TEST -->
-			<!-- <div class="row align-items-start">
+		<LoadingCustom v-if="isLoading" />
+		<div class="container prod-detail">
+			<div class="row align-items-start">
 				<div class="col-md-6">
 					<div
 						id="carouselExampleControls"
 						class="carousel slide"
-						data-ride="carousel"
+						data-bs-ride="carousel"
 					>
 						<div class="carousel-inner">
 							<div
 								class="carousel-item"
 								v-for="(item, index) in product.imageUrl"
 								:key="item.id"
-								:class="{ active: index == 0 }"
+								:class="{ active: index === 0 }"
 							>
 								<img :src="item" class="d-block w-100" :alt="product.title" />
 							</div>
 						</div>
-						<a
+						<button
+							v-if="product.imageUrl.length > 1"
 							class="carousel-control-prev"
-							href="#carouselExampleControls"
-							role="button"
-							data-slide="prev"
+							type="button"
+							data-bs-target="#carouselExampleControls"
+							data-bs-slide="prev"
 						>
 							<span
 								class="carousel-control-prev-icon"
 								aria-hidden="true"
 							></span>
-							<span class="sr-only">Previous</span>
-						</a>
-						<a
+							<span class="visually-hidden">Previous</span>
+						</button>
+						<button
+							v-if="product.imageUrl.length > 1"
 							class="carousel-control-next"
-							href="#carouselExampleControls"
-							role="button"
-							data-slide="next"
+							type="button"
+							data-bs-target="#carouselExampleControls"
+							data-bs-slide="next"
 						>
 							<span
 								class="carousel-control-next-icon"
 								aria-hidden="true"
 							></span>
-							<span class="sr-only">Next</span>
-						</a>
+							<span class="visually-hidden">Next</span>
+						</button>
 					</div>
 				</div>
 				<div class="col-md-6">
 					<h2 class="h2 prod-detail__title">{{ product.title }}</h2>
 					<div class="prod-detail__price">
-						<span class="prod-detail__price--discount">
-							${{ product.price | toThousands }}
+						<span
+							class="prod-detail__price--discount"
+							v-thousands="`$${product.price}`"
+						>
 						</span>
-						<del class="prod-detail__price--origin">
-							${{ product.origin_price | toThousands }}
+						<del
+							class="prod-detail__price--origin"
+							v-thousands="`$${product.origin_price}`"
+						>
 						</del>
 					</div>
 					<p class="prod-detail__description">
@@ -159,7 +146,7 @@ onMounted(() => {});
 					<div class="form-group mt-2">
 						<label for="classNum" class="prod-detail__label">課程數量：</label>
 						<select
-							class="form-control prod-detail__select"
+							class="form-select prod-detail__select"
 							id="classNum"
 							v-model="classNum"
 						>
@@ -169,10 +156,10 @@ onMounted(() => {});
 						</select>
 					</div>
 					<div class="btn-area right">
-						<router-link
+						<NuxtLink
 							to="/products"
 							class="btn btn-outline-primary btn-md rounded-pill"
-							>回課程頁</router-link
+							>回課程頁</NuxtLink
 						>
 						<a
 							href=""
@@ -194,8 +181,8 @@ onMounted(() => {});
 					<li>上課時，記得自備水壺跟毛巾，並著裝適合運動的服裝、鞋子。</li>
 					<li>疫情期間入館內皆須量體溫，我們也會頻繁實施館內消毒清潔。</li>
 				</ul>
-			</div> -->
-			<!-- <div class="prod-detail__maybelike" v-if="relatedProducts.length !== 0">
+			</div>
+			<div class="prod-detail__maybelike" v-if="relatedProducts.length !== 0">
 				<h3 class="prod-detail__subtitle">您可能也會喜歡</h3>
 				<div class="row">
 					<div
@@ -214,13 +201,14 @@ onMounted(() => {});
 							<div class="card-body prod-body text-left">
 								<h4 class="mb-0">{{ item.title }}</h4>
 								<p class="text-muted mt-3 prod-content">{{ item.content }}</p>
-								<div class="prod-price">
-									<div class="float-left">
-										<del>NT${{ item.origin_price | toThousands }}</del>
+								<div class="prod-price d-flex">
+									<div class="me-auto">
+										<del v-thousands="`NT$${item.origin_price}`"></del>
 									</div>
-									<div class="float-right prod-price__special">
-										NT${{ item.price | toThousands }}
-									</div>
+									<div
+										class="prod-price__special"
+										v-thousands="`NT$${item.price}`"
+									></div>
 								</div>
 							</div>
 							<a
@@ -231,7 +219,7 @@ onMounted(() => {});
 						</div>
 					</div>
 				</div>
-			</div> -->
+			</div>
 		</div>
 	</div>
 </template>
