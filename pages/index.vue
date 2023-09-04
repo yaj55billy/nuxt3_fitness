@@ -114,8 +114,8 @@
 									為 1 對
 									1的教學課程，從身體評估、目標了解到操作器械以達到鍛鍊效果。
 								</p>
-								<div class="prod-price d-flex justify-content-between">
-									<div class="">
+								<div class="prod-price d-flex">
+									<div class="me-auto">
 										<del>NT$1,200</del>
 									</div>
 									<div class="prod-price__special">NT$1,000</div>
@@ -142,8 +142,8 @@
 								<p class="text-muted mt-3 prod-content">
 									藉由身體延展搭配呼吸調整，有助疏解壓力，體態之雕塑及肢體平衡。
 								</p>
-								<div class="prod-price d-flex justify-content-between">
-									<div class="">
+								<div class="prod-price d-flex">
+									<div class="me-auto">
 										<del>NT$600</del>
 									</div>
 									<div class="prod-price__special">NT$400</div>
@@ -170,8 +170,8 @@
 								<p class="text-muted mt-3 prod-content">
 									為簡單的有氧運動，搭配快慢不同情境的音樂鍛鍊下半身肌群，燃燒大量脂肪。
 								</p>
-								<div class="prod-price d-flex justify-content-between">
-									<div class="">
+								<div class="prod-price d-flex">
+									<div class="me-auto">
 										<del>NT$400</del>
 									</div>
 									<div class="prod-price__special">NT$300</div>
