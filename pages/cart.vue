@@ -16,10 +16,6 @@ const createOrder = (values) => {
 			@submit="createOrder"
 		>
 			<h3 class="text-left">填寫資料</h3>
-			<pre>
-        {{ errors }}
-        {{ values }}
-      </pre>
 			<div class="form-group">
 				<label for="name" class="text-left w-100">收件人姓名</label>
 				<VField
@@ -33,6 +29,7 @@ const createOrder = (values) => {
 						'is-invalid': errors.name,
 						'is-valid': !errors.name && values.name,
 					}"
+					autocomplete="off"
 				/>
 				<VErrorMessage name="name" v-slot="{ message }">
 					<div class="invalid-feedback">{{ message }}</div>
@@ -69,6 +66,7 @@ const createOrder = (values) => {
 						'is-invalid': errors.tel,
 						'is-valid': !errors.tel && values.tel,
 					}"
+					autocomplete="off"
 				/>
 				<VErrorMessage name="tel" v-slot="{ message }">
 					<div class="invalid-feedback">{{ message }}</div>
@@ -87,6 +85,7 @@ const createOrder = (values) => {
 						'is-invalid': errors.address,
 						'is-valid': !errors.address && values.address,
 					}"
+					autocomplete="off"
 				/>
 				<VErrorMessage name="address" v-slot="{ message }">
 					<div class="invalid-feedback">{{ message }}</div>
@@ -95,12 +94,16 @@ const createOrder = (values) => {
 			<div class="form-group">
 				<label for="payment" class="text-left w-100">購買方式</label>
 				<VField
-					class="form-control"
+					as="select"
+					class="form-select"
 					id="payment"
 					label="購買方式"
 					name="payment"
-					as="select"
 					rules="required"
+					:class="{
+						'is-invalid': errors.payment,
+						'is-valid': !errors.payment && values.payment,
+					}"
 				>
 					<option value="" disabled="disabled" selected>請選擇付款方式</option>
 					<option value="WebATM">WebATM</option>

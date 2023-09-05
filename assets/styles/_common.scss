@@ -418,13 +418,11 @@ h6 {
 // input:-internal-autofill-selected {
 // 	background-color: transparent;
 // }
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-	background-color: transparent;
-	// -webkit-text-fill-color: white;
-}
+// input:-webkit-autofill {
+// 	background-color: rgb(250, 255, 189) !important;
+// 	background-image: none !important;
+// 	color: rgb(0, 0, 0) !important;
+// }
 
 // 覆寫 Bs5
 .form-control:focus {
