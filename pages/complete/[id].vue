@@ -21,7 +21,7 @@
 					<div class="cart-title">
 						<h2 style="">結帳完成</h2>
 						<NuxtLink
-							to="/index"
+							to="/"
 							class="btn btn-outline-primary btn-md rounded-pill"
 						>
 							回首頁
