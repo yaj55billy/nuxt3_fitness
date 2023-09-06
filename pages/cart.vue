@@ -1,6 +1,7 @@
 <script setup>
 import LoadingCustom from "@/components/LoadingCustom.vue";
 import { useToastStore } from "@/stores/useToast.js";
+import { useCartStore } from "@/stores/useCart.js";
 
 // toast store
 const store = useToastStore();
@@ -11,73 +12,13 @@ const router = useRouter();
 // 取 .env
 const config = useRuntimeConfig();
 
+const cartStore = useCartStore();
+
 // 資料定義
-const carts = ref([]);
-const cartPrice = ref(0);
-const cartsEmpty = ref(false);
-const isLoading = ref(false);
 const coupon = ref({});
 const couponPercent = ref(100);
 const discount = ref({ code: "" });
-
-const getCart = () => {
-	isLoading.value = true;
-	const api = `${config.public.apiUrl}/${config.public.uuid}/ec/shopping`;
-	$fetch(api, {
-		method: "GET",
-	})
-		.then((res) => {
-			if (res.data.length === 0) {
-				cartsEmpty.value = true;
-			} else {
-				carts.value = res.data;
-				updateTotal();
-			}
-		})
-		.finally(() => {
-			isLoading.value = false;
-		});
-};
-const updateTotal = () => {
-	cartPrice.value = 0; // 歸零。
-	carts.value.forEach((item) => {
-		cartPrice.value += item.product.price * item.quantity;
-	});
-};
-const deleteCartItem = (id) => {
-	isLoading.value = true;
-	const api = `${config.public.apiUrl}/${config.public.uuid}/ec/shopping/${id}`;
-	$fetch(api, {
-		method: "DELETE",
-	})
-		.then((res) => {
-			getCart();
-		})
-		.finally(() => {
-			isLoading.value = false;
-		});
-};
-
-const editCartItemNum = (id, quantity) => {
-	isLoading.value = true;
-	const api = `${config.public.apiUrl}/${config.public.uuid}/ec/shopping`;
-	const cart = {
-		product: id,
-		quantity,
-	};
-	$fetch(api, {
-		method: "PATCH",
-		body: cart,
-	})
-		.then((res) => {
-			store.messageHandle("課程數量改變成功");
-			store.isShowHandle();
-			getCart();
-		})
-		.finally(() => {
-			isLoading.value = false;
-		});
-};
+const isLoading = ref(false); // 除了購物車功能外
 
 const classDiscount = () => {
 	isLoading.value = true;
@@ -96,7 +37,7 @@ const classDiscount = () => {
 			store.messageHandle("折扣碼錯誤，請再確認看看是否輸入錯誤");
 			store.isShowHandle();
 			couponPercent.value = 100;
-			getCart();
+			cartStore.getCart();
 		})
 		.finally(() => {
 			isLoading.value = false;
@@ -127,19 +68,21 @@ const createOrder = (formdata) => {
 			isLoading.value = false;
 		});
 };
-
 onMounted(() => {
-	getCart();
+	cartStore.getCart();
 });
 </script>
 <template>
 	<div class="page">
-		<LoadingCustom v-if="isLoading" />
+		<LoadingCustom v-if="isLoading || cartStore.isCartLoading" />
 		<section class="section">
 			<div class="cart-page">
 				<div class="container">
 					<ul class="shop-step">
-						<li class="shop-step__list" :class="{ complete: !cartsEmpty }">
+						<li
+							class="shop-step__list"
+							:class="{ complete: !cartStore.cartsEmpty }"
+						>
 							<div class="shop-step__num">1</div>
 							<div>訂單</div>
 						</li>
@@ -160,7 +103,7 @@ onMounted(() => {
 							>繼續購物</NuxtLink
 						>
 					</div>
-					<div v-if="cartsEmpty === true">
+					<div v-if="cartStore.cartsEmpty === true">
 						<div class="cart-empty">
 							<h2 class="cart-empty__title">
 								QQ~~<br />
@@ -173,7 +116,7 @@ onMounted(() => {
 						<ul class="cart-info">
 							<li
 								class="cart-info__list"
-								v-for="item in carts"
+								v-for="item in cartStore.carts"
 								:key="item.product.id + 1"
 							>
 								<div class="cart-info__pic">
@@ -191,7 +134,10 @@ onMounted(() => {
 											:disabled="item.quantity === 1"
 											@click="
 												item.quantity--;
-												editCartItemNum(item.product.id, item.quantity);
+												cartStore.editCartItemNum(
+													item.product.id,
+													item.quantity
+												);
 											"
 										>
 											-
@@ -209,7 +155,10 @@ onMounted(() => {
 											:disabled="item.product.category === '體驗課程'"
 											@click="
 												item.quantity++;
-												editCartItemNum(item.product.id, item.quantity);
+												cartStore.editCartItemNum(
+													item.product.id,
+													item.quantity
+												);
 											"
 										>
 											+
@@ -222,7 +171,7 @@ onMounted(() => {
 								></div>
 								<div
 									class="cart-info__close"
-									@click="deleteCartItem(item.product.id)"
+									@click="cartStore.deleteCartItem(item.product.id)"
 								>
 									<i class="far fa-trash-alt"></i>
 								</div>
@@ -260,7 +209,7 @@ onMounted(() => {
 							<div class="col-md-4 cart-footer__total">
 								<div class="cart-footer__total--item">
 									<p class="mb-0">小計</p>
-									<p class="mb-0" v-thousands="`$${cartPrice}`"></p>
+									<p class="mb-0" v-thousands="`$${cartStore.cartPrice}`"></p>
 								</div>
 								<div class="cart-footer__total--item">
 									<p class="mb-0">折扣</p>
@@ -268,7 +217,7 @@ onMounted(() => {
 										class="mb-0"
 										v-thousands="
 											`$${Math.round(
-												cartPrice * ((100 - couponPercent) / 100)
+												cartStore.cartPrice * ((100 - couponPercent) / 100)
 											)}`
 										"
 									></p>
@@ -277,7 +226,9 @@ onMounted(() => {
 									<p class="mb-0 h4 fw-bold">總計</p>
 									<p
 										class="mb-0 h4 fw-bold"
-										v-thousands="`$${cartPrice * (couponPercent / 100)}`"
+										v-thousands="
+											`$${cartStore.cartPrice * (couponPercent / 100)}`
+										"
 									></p>
 								</div>
 							</div>
