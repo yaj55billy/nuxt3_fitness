@@ -2,26 +2,25 @@
 import LoadingCustom from "@/components/LoadingCustom.vue";
 import { useToastStore } from "@/stores/useToast.js";
 import { useCartStore } from "@/stores/useCart.js";
-
-// toast store
-const store = useToastStore();
-
+import { useStatusStore } from "@/stores/useStatus.js";
+// 取 .env
+const config = useRuntimeConfig();
 // router
 const router = useRouter();
 
-// 取 .env
-const config = useRuntimeConfig();
-
+// store
+const store = useToastStore();
+const statusStore = useStatusStore();
 const cartStore = useCartStore();
 
 // 資料定義
 const coupon = ref({});
 const couponPercent = ref(100);
 const discount = ref({ code: "" });
-const isLoading = ref(false); // 除了購物車功能外
+// const isLoading = ref(false); // 除了購物車功能外
 
 const classDiscount = () => {
-	isLoading.value = true;
+	statusStore.isLoading = true;
 	const api = `${config.public.apiUrl}/${config.public.uuid}/ec/coupon/search`;
 	$fetch(api, {
 		method: "POST",
@@ -40,12 +39,12 @@ const classDiscount = () => {
 			cartStore.getCart();
 		})
 		.finally(() => {
-			isLoading.value = false;
+			statusStore.isLoading = false;
 		});
 };
 
 const createOrder = (formdata) => {
-	isLoading.value = true;
+	statusStore.isLoading = true;
 	const api = `${config.public.apiUrl}/${config.public.uuid}/ec/orders`;
 	const order = formdata;
 	if (coupon.value.enabled) {
@@ -65,7 +64,7 @@ const createOrder = (formdata) => {
 			store.isShowHandle();
 		})
 		.finally(() => {
-			isLoading.value = false;
+			statusStore.isLoading = false;
 		});
 };
 onMounted(() => {
@@ -74,7 +73,6 @@ onMounted(() => {
 </script>
 <template>
 	<div class="page">
-		<LoadingCustom v-if="isLoading || cartStore.isCartLoading" />
 		<section class="section">
 			<div class="cart-page">
 				<div class="container">

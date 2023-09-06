@@ -1,21 +1,17 @@
 <script setup>
-import LoadingCustom from "@/components/LoadingCustom.vue";
-import { useToastStore } from "@/stores/useToast.js";
 import { useCartStore } from "@/stores/useCart.js";
-
-// toast store
-const store = useToastStore();
+import { useStatusStore } from "@/stores/useStatus.js";
 
 // 取 .env
 const config = useRuntimeConfig();
 
+// cart Store
 const cartStore = useCartStore();
 
 // 資料定義
 const products = ref([]);
 const nowProducts = ref([]);
 const nowCategory = ref("全部課程");
-const isLoading = ref(false);
 const num = ref(1);
 
 try {
@@ -52,7 +48,6 @@ const productHandler = (catchVal = "全部課程") => {
 
 <template>
 	<div>
-		<LoadingCustom v-if="isLoading || cartStore.isCartLoading" />
 		<PageBanner :text="'課程列表'" />
 		<div class="container prod">
 			<div class="congratulate">

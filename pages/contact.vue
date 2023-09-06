@@ -1,26 +1,25 @@
 <script setup>
 import LoadingCustom from "@/components/LoadingCustom.vue";
 import { useToastStore } from "@/stores/useToast.js";
+import { useStatusStore } from "@/stores/useStatus.js";
 
 // toast store
 const store = useToastStore();
-
-const isLoading = ref(false);
+const statusStore = useStatusStore();
 
 const sendMail = (formData, actions) => {
-	isLoading.value = true;
+	statusStore.isLoading = true;
 	store.messageHandle("成功寄出，我們將會在三個工作天內回覆您。");
 	store.isShowHandle();
 	setTimeout(() => {
 		actions.resetForm();
-		isLoading.value = false;
+		statusStore.isLoading = false;
 	}, 1500);
 };
 </script>
 
 <template>
 	<PageBanner :text="'聯絡我們'" />
-	<LoadingCustom v-if="isLoading" />
 	<div class="mt-6 mb-6">
 		<div class="container">
 			<h2 class="home-title">聯絡我們</h2>

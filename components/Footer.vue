@@ -1,10 +1,4 @@
-<script setup>
-// export default {
-//   data() {
-//     return {};
-//   },
-// };
-</script>
+<script setup></script>
 
 <template>
 	<div class="bg-dark">

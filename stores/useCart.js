@@ -1,5 +1,6 @@
 import { ref } from "vue";
 import { useToastStore } from "./useToast.js";
+import { useStatusStore } from "./useStatus.js";
 import { defineStore } from "pinia";
 
 // composition
@@ -9,6 +10,7 @@ export const useCartStore = defineStore("cart", () => {
 
 	// toastStore
 	const toastStore = useToastStore();
+	const statusStore = useStatusStore();
 
 	// 資料定義
 	const carts = ref([]);
@@ -17,7 +19,8 @@ export const useCartStore = defineStore("cart", () => {
 	const isCartLoading = ref(false);
 
 	const getCart = () => {
-		isCartLoading.value = true;
+		statusStore.isLoading = true;
+		// isCartLoading.value = true;
 		const api = `${config.public.apiUrl}/${config.public.uuid}/ec/shopping`;
 		$fetch(api, {
 			method: "GET",
@@ -32,7 +35,8 @@ export const useCartStore = defineStore("cart", () => {
 				}
 			})
 			.finally(() => {
-				isCartLoading.value = false;
+				statusStore.isLoading = false;
+				// isCartLoading.value = false;
 			});
 	};
 	const updateTotal = () => {
@@ -57,16 +61,19 @@ export const useCartStore = defineStore("cart", () => {
 				toastStore.messageHandle("商品已成功加入購物車");
 				toastStore.isShowHandle();
 				getCart();
-				isCartLoading.value = false;
+				statusStore.isLoading = true;
+				// isCartLoading.value = false;
 			})
 			.catch((error) => {
 				toastStore.messageHandle(error.response._data.errors[0]);
 				toastStore.isShowHandle();
-				isCartLoading.value = false;
+				statusStore.isLoading = false;
+				// isCartLoading.value = false;
 			});
 	};
 	const deleteCartItem = (id) => {
-		isCartLoading.value = true;
+		// isCartLoading.value = true;
+		statusStore.isLoading = true;
 		const api = `${config.public.apiUrl}/${config.public.uuid}/ec/shopping/${id}`;
 		$fetch(api, {
 			method: "DELETE",
@@ -75,12 +82,14 @@ export const useCartStore = defineStore("cart", () => {
 				getCart();
 			})
 			.finally(() => {
-				isCartLoading.value = false;
+				// isCartLoading.value = false;
+				statusStore.isLoading = false;
 			});
 	};
 
 	const editCartItemNum = (id, quantity) => {
-		isCartLoading.value = true;
+		// isCartLoading.value = true;
+		statusStore.isLoading = true;
 		const api = `${config.public.apiUrl}/${config.public.uuid}/ec/shopping`;
 		const cart = {
 			product: id,
@@ -97,6 +106,7 @@ export const useCartStore = defineStore("cart", () => {
 			})
 			.finally(() => {
 				isCartLoading.value = false;
+				statusStore.isLoading = false;
 			});
 	};
 
@@ -104,7 +114,7 @@ export const useCartStore = defineStore("cart", () => {
 		carts,
 		cartPrice,
 		cartsEmpty,
-		isCartLoading,
+		// isCartLoading,
 		getCart,
 		addToCart,
 		deleteCartItem,
