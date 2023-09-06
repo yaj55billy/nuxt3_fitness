@@ -1,42 +1,26 @@
 <script setup>
-// export default {
-//   components: {
-//     Navbar,
-//     Footer,
-//   },
-//   data() {
-//     return {
-//       isLoading: false,
-//       contactdata: {
-//         name: '',
-//         email: '',
-//         tel: '',
-//         message: '',
-//       },
-//     };
-//   },
-//   methods: {
-//     sendMail() {
-//       this.isLoading = true;
-//       this.$bus.$emit('notice-user', '成功寄出，我們將會在三個工作天內回覆您。');
-//       setTimeout(() => {
-//         this.isLoading = false;
-//       }, 2000);
-//     },
-//   },
-// };
+import LoadingCustom from "@/components/LoadingCustom.vue";
+import { useToastStore } from "@/stores/useToast.js";
+
+// toast store
+const store = useToastStore();
+
+const isLoading = ref(false);
+
+const sendMail = (formData, actions) => {
+	isLoading.value = true;
+	store.messageHandle("成功寄出，我們將會在三個工作天內回覆您。");
+	store.isShowHandle();
+	setTimeout(() => {
+		actions.resetForm();
+		isLoading.value = false;
+	}, 1500);
+};
 </script>
 
 <template>
-	<!-- <loading :active.sync="isLoading">
-			<div class="loadingio-spinner-ball-h1u60i2wsu">
-				<div class="ldio-ivekc1fyg2">
-					<div></div>
-				</div>
-			</div>
-		</loading> -->
-	<!-- <Navbar></Navbar> -->
 	<PageBanner :text="'聯絡我們'" />
+	<LoadingCustom v-if="isLoading" />
 	<div class="mt-6 mb-6">
 		<div class="container">
 			<h2 class="home-title">聯絡我們</h2>
@@ -59,95 +43,100 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-md-8 m-auto">
-					表單
-					<!-- <validation-observer v-slot="{ invalid }">
-						<form class="form mt-5" @submit.prevent="sendMail()">
-							<div class="form-group">
-								<validation-provider
-									rules="required"
-									v-slot="{ errors, classes }"
-								>
-									<label for="contact-name" class="text-left w-100">姓名</label>
-									<input
-										id="contact-name"
-										type="text"
-										name="姓名"
-										v-model="contactdata.name"
-										class="form-control"
-										:class="classes"
-									/>
-									<span class="invalid-feedback">{{ errors[0] }}</span>
-								</validation-provider>
-							</div>
-							<div class="form-group">
-								<validation-provider
-									rules="required|email"
-									v-slot="{ errors, classes }"
-								>
-									<label for="contact-email" class="text-left w-100"
-										>Email</label
-									>
-									<input
-										id="contact-email"
-										type="email"
-										name="信箱"
-										v-model="contactdata.email"
-										class="form-control"
-										:class="classes"
-									/>
-									<span class="invalid-feedback">{{ errors[0] }}</span>
-								</validation-provider>
-							</div>
-							<div class="form-group">
-								<validation-provider
-									rules="required|min:8"
-									v-slot="{ errors, classes }"
-								>
-									<label for="contact-tel" class="text-left w-100">電話</label>
-									<input
-										id="contact-tel"
-										type="tel"
-										name="電話"
-										v-model="contactdata.tel"
-										class="form-control"
-										:class="classes"
-									/>
-									<span class="invalid-feedback">{{ errors[0] }}</span>
-								</validation-provider>
-							</div>
-							<div class="form-group">
-								<validation-provider
-									rules="required"
-									v-slot="{ errors, classes }"
-								>
-									<label for="contact-message" class="text-left w-100"
-										>留言</label
-									>
-									<textarea
-										name="留言"
-										id=""
-										cols="30"
-										rows="3"
-										class="form-control"
-										v-model="contactdata.message"
-										:class="classes"
-									>
-									</textarea>
-									<span class="invalid-feedback">{{ errors[0] }}</span>
-								</validation-provider>
-							</div>
-							<div class="btn-area right">
-								<button
-									type="submit"
-									class="btn btn-primary rounded-pill btn-xl"
-									:disabled="invalid"
-								>
-									留言
-								</button>
-							</div>
-						</form>
-					</validation-observer> -->
+				<div class="col-md-8 me-auto">
+					<VForm
+						class="form mt-5 needs-validation"
+						v-slot="{ meta, errors, values }"
+						novalidate
+						@submit="sendMail"
+					>
+						<div class="form-group">
+							<label for="contactName" class="text-left w-100">姓名</label>
+							<VField
+								id="contactName"
+								label="姓名"
+								name="contactName"
+								type="text"
+								rules="required"
+								class="form-control"
+								:class="{
+									'is-invalid': errors.contactName,
+									'is-valid': !errors.contactName && values.contactName,
+								}"
+								autocomplete="off"
+							/>
+							<VErrorMessage name="contactName" v-slot="{ message }">
+								<div class="invalid-feedback">{{ message }}</div>
+							</VErrorMessage>
+						</div>
+						<div class="form-group">
+							<label for="contactEmail" class="text-left w-100">Email</label>
+							<VField
+								id="contactEmail"
+								name="contactEmail"
+								type="email"
+								label="信箱"
+								rules="required|email"
+								class="form-control"
+								:class="{
+									'is-invalid': errors.contactEmail,
+									'is-valid': !errors.contactEmail && values.contactEmail,
+								}"
+								autocomplete="off"
+							/>
+							<VErrorMessage name="contactEmail" v-slot="{ message }">
+								<div class="invalid-feedback">{{ message }}</div>
+							</VErrorMessage>
+						</div>
+						<div class="form-group">
+							<label for="contactTel" class="text-left w-100">電話</label>
+							<VField
+								id="contactTel"
+								label="電話"
+								name="contactTel"
+								type="tel"
+								rules="required|min:8"
+								class="form-control"
+								:class="{
+									'is-invalid': errors.contactTel,
+									'is-valid': !errors.contactTel && values.contactTel,
+								}"
+								autocomplete="off"
+							/>
+							<VErrorMessage name="contactTel" v-slot="{ message }">
+								<div class="invalid-feedback">{{ message }}</div>
+							</VErrorMessage>
+						</div>
+						<div class="form-group">
+							<label for="contactMessage" class="text-left w-100">留言</label>
+							<VField
+								as="textarea"
+								rules="required"
+								cols="30"
+								rows="3"
+								id="contactMessage"
+								name="contactMessage"
+								label="留言"
+								class="form-control"
+								:class="{
+									'is-invalid': errors.contactMessage,
+									'is-valid': !errors.contactMessage && values.contactMessage,
+								}"
+							/>
+							<VErrorMessage name="contactMessage" v-slot="{ message }">
+								<div class="invalid-feedback">{{ message }}</div>
+							</VErrorMessage>
+						</div>
+						<div class="btn-area right">
+							<button
+								type="submit"
+								class="btn btn-primary rounded-pill btn-xl"
+								:disabled="!meta.valid"
+							>
+								留言
+							</button>
+						</div>
+					</VForm>
 				</div>
 			</div>
 		</div>

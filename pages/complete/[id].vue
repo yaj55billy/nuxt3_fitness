@@ -1,28 +1,6 @@
-<script setup>
-// import Navbar from '@/components/Navbar.vue';
-// import Footer from '@/components/Footer.vue';
-
-// export default {
-//   components: {
-//     Navbar,
-//     Footer,
-//   },
-//   data() {
-//     return {
-//       isLoading: false,
-//     };
-//   },
-// };
-</script>
+<script setup></script>
 <template>
 	<div class="page">
-		<!-- <loading :active.sync="isLoading">
-			<div class="loadingio-spinner-ball-h1u60i2wsu">
-				<div class="ldio-ivekc1fyg2">
-					<div></div>
-				</div>
-			</div>
-		</loading> -->
 		<section class="section">
 			<div class="cart-page">
 				<div class="container">
@@ -42,12 +20,12 @@
 					</ul>
 					<div class="cart-title">
 						<h2 style="">結帳完成</h2>
-						<router-link
-							to="/index"
+						<NuxtLink
+							to="/"
 							class="btn btn-outline-primary btn-md rounded-pill"
 						>
 							回首頁
-						</router-link>
+						</NuxtLink>
 					</div>
 					<div class="cart-complete">
 						<h2 class="cart-complete__title">感謝您的購買!</h2>

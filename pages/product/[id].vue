@@ -1,6 +1,7 @@
 <script setup>
 import LoadingCustom from "@/components/LoadingCustom.vue";
 import { useToastStore } from "@/stores/useToast.js";
+import { useCartStore } from "@/stores/useCart.js";
 
 // route
 const route = useRoute();
@@ -11,6 +12,8 @@ const store = useToastStore();
 
 // 取 .env
 const config = useRuntimeConfig();
+
+const cartStore = useCartStore();
 
 // 資料定義
 const classNum = ref(1);
@@ -51,35 +54,11 @@ try {
 const goOtherPage = (id) => {
 	router.push(`/product/${id}`);
 };
-
-const addToCart = (id, quantity = 1) => {
-	isLoading.value = true;
-	const api = `${config.public.apiUrl}/${config.public.uuid}/ec/shopping`;
-	const cart = {
-		product: id,
-		quantity,
-	};
-
-	$fetch(api, {
-		method: "POST",
-		body: cart,
-	})
-		.then(() => {
-			store.messageHandle("商品已成功加入購物車");
-			store.isShowHandle();
-			isLoading.value = false;
-		})
-		.catch((error) => {
-			store.messageHandle(error.response._data.errors[0]);
-			store.isShowHandle();
-			isLoading.value = false;
-		});
-};
 </script>
 
 <template>
 	<div>
-		<LoadingCustom v-if="isLoading" />
+		<LoadingCustom v-if="isLoading || cartStore.isCartLoading" />
 		<div class="container prod-detail">
 			<div class="row align-items-start">
 				<div class="col-md-6">
@@ -164,7 +143,7 @@ const addToCart = (id, quantity = 1) => {
 						<a
 							href=""
 							class="btn btn-primary btn-md rounded-pill"
-							@click.prevent="addToCart(product.id, classNum)"
+							@click.prevent="cartStore.addToCart(product.id, classNum)"
 							>加入購物車</a
 						>
 					</div>

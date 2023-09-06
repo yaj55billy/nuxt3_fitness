@@ -34,6 +34,18 @@ export default defineNuxtConfig({
       {
           'autoImports': ['defineStore', 'acceptHMRUpdate'],
       },
-    ]
+    ],
+    [
+      '@vee-validate/nuxt',
+      {
+        autoImports: true,
+        componentNames: {
+          Form: 'VForm',
+          Field: 'VField',
+          FieldArray: 'VFieldArray',
+          ErrorMessage: 'VErrorMessage',
+        },
+      },
+    ],
   ],
 })

@@ -414,6 +414,16 @@ h6 {
 	}
 }
 
+// 表單相關
+// input:-internal-autofill-selected {
+// 	background-color: transparent;
+// }
+// input:-webkit-autofill {
+// 	background-color: rgb(250, 255, 189) !important;
+// 	background-image: none !important;
+// 	color: rgb(0, 0, 0) !important;
+// }
+
 // 覆寫 Bs5
 .form-control:focus {
 	box-shadow: 0 0 0 0;

@@ -1,11 +1,15 @@
 <script setup>
 import LoadingCustom from "@/components/LoadingCustom.vue";
 import { useToastStore } from "@/stores/useToast.js";
+import { useCartStore } from "@/stores/useCart.js";
+
 // toast store
 const store = useToastStore();
 
 // 取 .env
 const config = useRuntimeConfig();
+
+const cartStore = useCartStore();
 
 // 資料定義
 const products = ref([]);
@@ -44,35 +48,11 @@ const productHandler = (catchVal = "全部課程") => {
 		);
 	}
 };
-
-const addToCart = (id, quantity = 1) => {
-	isLoading.value = true;
-	const api = `${config.public.apiUrl}/${config.public.uuid}/ec/shopping`;
-	const cart = {
-		product: id,
-		quantity,
-	};
-
-	$fetch(api, {
-		method: "POST",
-		body: cart,
-	})
-		.then(() => {
-			store.messageHandle("商品已成功加入購物車");
-			store.isShowHandle();
-			isLoading.value = false;
-		})
-		.catch((error) => {
-			store.messageHandle(error.response._data.errors[0]);
-			store.isShowHandle();
-			isLoading.value = false;
-		});
-};
 </script>
 
 <template>
 	<div>
-		<LoadingCustom v-if="isLoading" />
+		<LoadingCustom v-if="isLoading || cartStore.isCartLoading" />
 		<PageBanner :text="'課程列表'" />
 		<div class="container prod">
 			<div class="congratulate">
@@ -121,7 +101,11 @@ const addToCart = (id, quantity = 1) => {
 								class="card-img-top"
 								:alt="item.title"
 							/>
-							<a href="" class="prod-cart" @click.prevent="addToCart(item.id)">
+							<a
+								href=""
+								class="prod-cart"
+								@click.prevent="cartStore.addToCart(item.id)"
+							>
 								<i class="fas fa-cart-plus"></i>
 							</a>
 						</div>
