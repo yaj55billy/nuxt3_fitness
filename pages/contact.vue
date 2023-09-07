@@ -1,12 +1,10 @@
 <script setup>
-import LoadingCustom from "@/components/LoadingCustom.vue";
 import { useToastStore } from "@/stores/useToast.js";
 import { useStatusStore } from "@/stores/useStatus.js";
 
 // toast store
 const store = useToastStore();
 const statusStore = useStatusStore();
-
 const sendMail = (formData, actions) => {
 	statusStore.isLoading = true;
 	store.messageHandle("成功寄出，我們將會在三個工作天內回覆您。");

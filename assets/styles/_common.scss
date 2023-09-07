@@ -250,7 +250,7 @@ h6 {
 	z-index: 1200;
 	width: 100%;
 	height: 100%;
-	background-color: rgba(0, 0, 0, 0.4);
+	background-color: rgba(255, 255, 255, 0.5);
 }
 .loading-scope {
 	width: 200px;
@@ -272,6 +272,9 @@ h6 {
 	transform: perspective(1px) scale(1);
 	backface-visibility: hidden;
 	transform-origin: 0 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 .loading-content .loading-ball {
 	box-sizing: content-box;

@@ -1,19 +1,13 @@
 <script setup>
-import { useLoading } from "vue-loading-overlay";
 import Pagination from "@/components/Pagination.vue";
 import { useToastStore } from "@/stores/useToast.js";
+import { useStatusStore } from "@/stores/useStatus.js";
+
+// cart Store
+const statusStore = useStatusStore();
 
 // bootstrap js
 const { $bootstrap } = useNuxtApp();
-
-// Loading
-const pageLoading = ref(null);
-
-const $loading = useLoading({
-	container: pageLoading.value,
-	zIndex: 1200,
-	opacity: 0.4,
-});
 
 // toast store
 const store = useToastStore();
@@ -54,7 +48,7 @@ let headers = {
 };
 
 const getCoupons = (num = 1) => {
-	const loader = $loading.show();
+	statusStore.isLoading = true;
 
 	const api = `${config.public.apiUrl}/${config.public.uuid}/admin/ec/coupons`;
 	$fetch(api, {
@@ -67,7 +61,7 @@ const getCoupons = (num = 1) => {
 			pagination.value = res.meta.pagination;
 		})
 		.finally(() => {
-			loader.hide();
+			statusStore.isLoading = false;
 		});
 	if (tempCoupons.value.id) {
 		tempCoupons.value = {
@@ -93,7 +87,7 @@ const openCouponModal = (status, item) => {
 		};
 		couponModalHandle.show();
 	} else {
-		const loader = $loading.show();
+		statusStore.isLoading = true;
 
 		const api = `${config.public.apiUrl}/${config.public.uuid}/admin/ec/coupon/${item.id}`;
 
@@ -109,13 +103,13 @@ const openCouponModal = (status, item) => {
 			status === "edit"
 				? couponModalHandle.show() // 編輯
 				: delCouponModalHandle.show(); // 刪除
-			loader.hide();
+			statusStore.isLoading = false;
 		});
 	}
 };
 
 const updateCoupon = () => {
-	const loader = $loading.show();
+	statusStore.isLoading = true;
 	tempCoupons.value.deadline_at = `${coupon_date.value} ${coupon_time.value}`;
 
 	let api = `${config.public.apiUrl}/${config.public.uuid}/admin/ec/coupon`,
@@ -140,19 +134,20 @@ const updateCoupon = () => {
 			couponModalHandle.hide();
 			store.messageHandle(successText);
 			store.isShowHandle();
-			loader.hide();
 			getCoupons();
 		})
 		.catch(() => {
-			loader.hide();
 			couponModalHandle.hide();
 			store.messageHandle(failText);
 			store.isShowHandle();
+		})
+		.finally(() => {
+			statusStore.isLoading = false;
 		});
 };
 
 const deleteCoupon = () => {
-	const loader = $loading.show();
+	statusStore.isLoading = true;
 	const api = `${config.public.apiUrl}/${config.public.uuid}/admin/ec/coupon/${tempCoupons.value.id}`;
 	$fetch(api, {
 		method: "DELETE",
@@ -169,7 +164,7 @@ const deleteCoupon = () => {
 		})
 		.finally(() => {
 			delCouponModalHandle.hide();
-			loader.hide();
+			statusStore.isLoading = false;
 		});
 };
 
@@ -182,7 +177,6 @@ onMounted(() => {
 </script>
 
 <template>
-	<div ref="pageLoading"></div>
 	<div class="mt-4">
 		<h2>優惠券列表</h2>
 		<div class="text-end mt-sm-2 mt-4">

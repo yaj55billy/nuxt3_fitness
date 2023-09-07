@@ -1,36 +1,22 @@
 <script setup>
-import { h } from "vue";
-import { useLoading } from "vue-loading-overlay";
+// layout cancel
+definePageMeta({
+	layout: false,
+});
 
-// component
 import LoadingCustom from "@/components/LoadingCustom";
+import { useStatusStore } from "@/stores/useStatus.js";
+// cart Store
+const statusStore = useStatusStore();
+
 import Toast from "@/components/Toast";
 
 // toast store
 import { useToastStore } from "@/stores/useToast.js";
 const store = useToastStore();
 
-// layout cancel
-definePageMeta({
-	layout: false,
-});
-
 // router
 const router = useRouter();
-
-// Loading
-const pageLoading = ref(null);
-
-const $loading = useLoading(
-	{
-		container: pageLoading.value,
-		zIndex: 999,
-		opacity: 0.4,
-	},
-	{
-		default: () => h(LoadingCustom),
-	}
-);
 
 // 取 .env
 const config = useRuntimeConfig();
@@ -40,7 +26,7 @@ const user = ref({ email: "", password: "" });
 const token = ref("");
 
 const signin = async () => {
-	const loader = $loading.show();
+	statusStore.isLoading = true;
 	const api = `${config.public.apiUrl}/auth/login`;
 
 	$fetch(api, {
@@ -67,14 +53,14 @@ const signin = async () => {
 			store.isShowHandle();
 		})
 		.finally(() => {
-			loader.hide();
+			statusStore.isLoading = true;
 		});
 };
 </script>
 
 <template>
 	<Toast />
-	<div ref="pageLoading"></div>
+	<LoadingCustom v-if="statusStore.isLoading" />
 	<div class="login-page">
 		<form class="form-signin" @submit.prevent="signin">
 			<h1 class="h3 mb-3 font-weight-normal">請先登入</h1>

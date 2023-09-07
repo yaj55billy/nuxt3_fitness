@@ -1,19 +1,13 @@
 <script setup>
-import { useLoading } from "vue-loading-overlay";
 import Pagination from "@/components/Pagination.vue";
 import { useToastStore } from "@/stores/useToast.js";
+import { useStatusStore } from "@/stores/useStatus.js";
+
+// cart Store
+const statusStore = useStatusStore();
 
 // bootstrap js
 const { $bootstrap } = useNuxtApp();
-
-// Loading
-const pageLoading = ref(null);
-
-const $loading = useLoading({
-	container: pageLoading.value,
-	zIndex: 1200,
-	opacity: 0.4,
-});
 
 // toast store
 const store = useToastStore();
@@ -48,7 +42,7 @@ let headers = {
 };
 
 const getProducts = (num = 1) => {
-	const loader = $loading.show();
+	statusStore.isLoading = true;
 
 	const api = `${config.public.apiUrl}/${config.public.uuid}/admin/ec/products`;
 	$fetch(api, {
@@ -61,7 +55,7 @@ const getProducts = (num = 1) => {
 			pagination.value = res.meta.pagination;
 		})
 		.finally(() => {
-			loader.hide();
+			statusStore.isLoading = false;
 		});
 	tempProduct.value = {
 		imageUrl: [],
@@ -75,25 +69,24 @@ const openModal = (status, item) => {
 		};
 		productModalHandle.show();
 	} else {
-		const loader = $loading.show();
+		statusStore.isLoading = true;
 
 		const api = `${config.public.apiUrl}/${config.public.uuid}/admin/ec/product/${item.id}`;
 		$fetch(api, {
 			method: "GET",
 			headers: headers,
 		}).then((res) => {
-			console.log(res.data);
 			tempProduct.value = res.data;
 			status === "edit"
 				? productModalHandle.show() // 編輯
 				: delProductModalHandle.show(); // 刪除
-			loader.hide();
+			statusStore.isLoading = false;
 		});
 	}
 };
 
 const updateData = () => {
-	const loader = $loading.show();
+	statusStore.isLoading = true;
 
 	let api = `${config.public.apiUrl}/${config.public.uuid}/admin/ec/product`,
 		httpMethod = "POST",
@@ -116,19 +109,19 @@ const updateData = () => {
 			productModalHandle.hide();
 			store.messageHandle(successText);
 			store.isShowHandle();
-			loader.hide();
 			getProducts();
 		})
 		.catch(() => {
-			loader.hide();
 			productModalHandle.hide();
 			store.messageHandle(failText);
 			store.isShowHandle();
+		})
+		.finally(() => {
+			statusStore.isLoading = false;
 		});
 };
-
 const deleteProduct = () => {
-	const loader = $loading.show();
+	statusStore.isLoading = true;
 	const api = `${config.public.apiUrl}/${config.public.uuid}/admin/ec/product/${tempProduct.value.id}`;
 	$fetch(api, {
 		method: "DELETE",
@@ -145,7 +138,7 @@ const deleteProduct = () => {
 		})
 		.finally(() => {
 			delProductModalHandle.hide();
-			loader.hide();
+			statusStore.isLoading = false;
 		});
 };
 
@@ -191,7 +184,6 @@ onMounted(() => {
 </script>
 
 <template>
-	<div ref="pageLoading"></div>
 	<div class="mt-4">
 		<h2>產品列表</h2>
 		<div class="text-end mt-sm-2 mt-4">

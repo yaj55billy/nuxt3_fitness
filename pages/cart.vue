@@ -1,5 +1,4 @@
 <script setup>
-import LoadingCustom from "@/components/LoadingCustom.vue";
 import { useToastStore } from "@/stores/useToast.js";
 import { useCartStore } from "@/stores/useCart.js";
 import { useStatusStore } from "@/stores/useStatus.js";
@@ -17,7 +16,6 @@ const cartStore = useCartStore();
 const coupon = ref({});
 const couponPercent = ref(100);
 const discount = ref({ code: "" });
-// const isLoading = ref(false); // 除了購物車功能外
 
 const classDiscount = () => {
 	statusStore.isLoading = true;

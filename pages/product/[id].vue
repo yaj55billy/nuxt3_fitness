@@ -1,5 +1,4 @@
 <script setup>
-import LoadingCustom from "@/components/LoadingCustom.vue";
 import { useToastStore } from "@/stores/useToast.js";
 import { useCartStore } from "@/stores/useCart.js";
 
@@ -20,7 +19,6 @@ const classNum = ref(1);
 const classMax = ref(36);
 const product = ref({});
 const relatedProducts = ref([]);
-const isLoading = ref(false); // api use
 
 // api
 const getRelatedProducts = () => {
@@ -58,7 +56,6 @@ const goOtherPage = (id) => {
 
 <template>
 	<div>
-		<LoadingCustom v-if="isLoading || cartStore.isCartLoading" />
 		<div class="container prod-detail">
 			<div class="row align-items-start">
 				<div class="col-md-6">

@@ -1,6 +1,5 @@
 <script setup>
 import { useCartStore } from "@/stores/useCart.js";
-import { useStatusStore } from "@/stores/useStatus.js";
 
 // 取 .env
 const config = useRuntimeConfig();

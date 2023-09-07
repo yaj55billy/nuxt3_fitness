@@ -1,25 +1,18 @@
 <script setup>
-import { useLoading } from "vue-loading-overlay";
 import Pagination from "@/components/Pagination.vue";
 import { useToastStore } from "@/stores/useToast.js";
+import { useStatusStore } from "@/stores/useStatus.js";
+
+// cart Store
+const statusStore = useStatusStore();
 
 // bootstrap js
 const { $bootstrap } = useNuxtApp();
-
-// Loading
-const pageLoading = ref(null);
-
-const $loading = useLoading({
-	container: pageLoading.value,
-	zIndex: 1200,
-	opacity: 0.4,
-});
 
 // 取 .env
 const config = useRuntimeConfig();
 
 // toast store
-
 const store = useToastStore();
 
 // 資料定義
@@ -45,7 +38,7 @@ let headers = {
 };
 
 const getData = (page = 1) => {
-	const loader = $loading.show();
+	statusStore.isLoading = true;
 
 	const api = `${config.public.apiUrl}/${config.public.uuid}/admin/storage`;
 	$fetch(api, {
@@ -58,7 +51,7 @@ const getData = (page = 1) => {
 			pagination.value = res.meta.pagination;
 		})
 		.finally(() => {
-			loader.hide();
+			statusStore.isLoading = false;
 		});
 };
 
@@ -68,7 +61,7 @@ const openDelModal = (item) => {
 };
 
 const deleteStorage = (id) => {
-	const loader = $loading.show();
+	statusStore.isLoading = true;
 	const api = `${config.public.apiUrl}/${config.public.uuid}/admin/storage/${id}`;
 
 	$fetch(api, {
@@ -79,14 +72,15 @@ const deleteStorage = (id) => {
 			delStorageModalHandle.hide();
 			store.messageHandle("圖片刪除成功~~");
 			store.isShowHandle();
-			loader.hide();
 			getData();
 		})
 		.catch(() => {
 			delStorageModalHandle.hide();
 			store.messageHandle("圖片刪除失敗，請再檢查看看");
 			store.isShowHandle();
-			loader.hide();
+		})
+		.finally(() => {
+			statusStore.isLoading = false;
 		});
 };
 
@@ -97,7 +91,6 @@ onMounted(() => {
 </script>
 
 <template>
-	<div ref="pageLoading" class="pre"></div>
 	<div class="mt-4">
 		<h2 class="mt-sm-5 mt-4">圖片列表</h2>
 		<table class="table table-admin mt-4">

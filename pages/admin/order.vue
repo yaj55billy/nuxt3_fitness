@@ -1,16 +1,10 @@
 <script setup>
-import { useLoading } from "vue-loading-overlay";
 import Pagination from "@/components/Pagination.vue";
 import { useToastStore } from "@/stores/useToast.js";
+import { useStatusStore } from "@/stores/useStatus.js";
 
-// Loading
-const pageLoading = ref(null);
-
-const $loading = useLoading({
-	container: pageLoading.value,
-	zIndex: 1200,
-	opacity: 0.4,
-});
+// cart Store
+const statusStore = useStatusStore();
 
 // toast store
 const store = useToastStore();
@@ -38,7 +32,7 @@ let headers = {
 };
 
 const getOrders = (num = 1) => {
-	const loader = $loading.show();
+	statusStore.isLoading = true;
 
 	const api = `${config.public.apiUrl}/${config.public.uuid}/admin/ec/orders`;
 	$fetch(api, {
@@ -51,7 +45,7 @@ const getOrders = (num = 1) => {
 			pagination.value = res.meta.pagination;
 		})
 		.finally(() => {
-			loader.hide();
+			statusStore.isLoading = false;
 		});
 };
 
@@ -86,7 +80,6 @@ onMounted(() => {
 </script>
 
 <template>
-	<div ref="pageLoading"></div>
 	<div class="mt-4">
 		<h2>訂單列表</h2>
 		<table class="table table-admin table-rwd mt-4">

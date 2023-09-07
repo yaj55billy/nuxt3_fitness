@@ -1,5 +1,10 @@
 <script setup>
 import Toast from "@/components/Toast";
+import LoadingAdmin from "@/components/LoadingAdmin.vue";
+import { useStatusStore } from "@/stores/useStatus.js";
+
+// cart Store
+const statusStore = useStatusStore();
 
 // layout default false
 definePageMeta({
@@ -71,7 +76,7 @@ onMounted(() => {
 
 <template>
 	<Toast />
-	<div ref="pageLoading"></div>
+	<LoadingAdmin v-if="statusStore.isLoading" />
 	<div class="app">
 		<h2>後台管理頁面</h2>
 

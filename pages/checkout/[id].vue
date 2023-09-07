@@ -1,6 +1,6 @@
 <script setup>
-import LoadingCustom from "@/components/LoadingCustom.vue";
 import { useToastStore } from "@/stores/useToast.js";
+import { useStatusStore } from "@/stores/useStatus.js";
 
 // route
 const route = useRoute();
@@ -8,6 +8,7 @@ const router = useRouter();
 
 // toast store
 const store = useToastStore();
+const statusStore = useStatusStore();
 
 // 取 .env
 const config = useRuntimeConfig();
@@ -15,10 +16,9 @@ const config = useRuntimeConfig();
 // 資料定義
 const orderId = ref("");
 const order = ref({});
-const isLoading = ref(false);
 
 const payOrder = () => {
-	isLoading.value = true;
+	statusStore.isLoading = true;
 	const api = `${config.public.apiUrl}/${config.public.uuid}/ec/orders/${orderId.value}/paying`;
 
 	$fetch(api, {
@@ -36,28 +36,27 @@ const payOrder = () => {
 			store.isShowHandle();
 		})
 		.finally(() => {
-			isLoading.value = false;
+			statusStore.isLoading = false;
 		});
 };
 
 onMounted(() => {
 	orderId.value = route.params.id;
 	if (orderId.value) {
-		isLoading.value = true;
+		statusStore.isLoading = true;
 		const api = `${config.public.apiUrl}/${config.public.uuid}/ec/orders/${orderId.value}`;
 		$fetch(api)
 			.then((res) => {
 				order.value = res.data;
 			})
 			.finally(() => {
-				isLoading.value = false;
+				statusStore.isLoading = false;
 			});
 	}
 });
 </script>
 <template>
 	<div class="page">
-		<LoadingCustom v-if="isLoading" />
 		<section class="section">
 			<div class="cart-page">
 				<div class="container">
