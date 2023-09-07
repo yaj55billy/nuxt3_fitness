@@ -1,68 +1,20 @@
 <script setup>
-// layout cancel
 definePageMeta({
 	layout: false,
 });
-
+import Toast from "@/components/Toast";
 import LoadingCustom from "@/components/LoadingCustom";
 import { useStatusStore } from "@/stores/useStatus.js";
-// cart Store
+import { useUser } from "@/composables/useUser";
 const statusStore = useStatusStore();
-
-import Toast from "@/components/Toast";
-
-// toast store
-import { useToastStore } from "@/stores/useToast.js";
-const store = useToastStore();
-
-// router
-const router = useRouter();
-
-// 取 .env
-const config = useRuntimeConfig();
-
-// 資料定義
-const user = ref({ email: "", password: "" });
-const token = ref("");
-
-const signin = async () => {
-	statusStore.isLoading = true;
-	const api = `${config.public.apiUrl}/auth/login`;
-
-	$fetch(api, {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-			Accept: "application/json",
-			Authorization: `Bearer ${token.value}`,
-		},
-		body: user.value,
-	})
-		.then((res) => {
-			const { token } = res;
-			const { expired } = res;
-			document.cookie = `token=${token}; expires=${new Date(
-				expired * 1000
-			)}; path=/`;
-			store.messageHandle("登入成功~~");
-			store.isShowHandle();
-			router.push("/admin/products");
-		})
-		.catch(() => {
-			store.messageHandle("登入失敗，請再檢查帳密!");
-			store.isShowHandle();
-		})
-		.finally(() => {
-			statusStore.isLoading = true;
-		});
-};
+const { user, signIn } = useUser();
 </script>
 
 <template>
 	<Toast />
 	<LoadingCustom v-if="statusStore.isLoading" />
 	<div class="login-page">
-		<form class="form-signin" @submit.prevent="signin">
+		<form class="form-signin" @submit.prevent="signIn">
 			<h1 class="h3 mb-3 font-weight-normal">請先登入</h1>
 			<div class="form-group">
 				<label for="inputEmail" class="sr-only">Email address</label>
