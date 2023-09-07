@@ -2,17 +2,12 @@
 import { useToastStore } from "@/stores/useToast.js";
 import { useCartStore } from "@/stores/useCart.js";
 import { useStatusStore } from "@/stores/useStatus.js";
-// 取 .env
+import { useOrder } from "@/composables/useOrder.js";
+const { createOrder } = useOrder();
 const config = useRuntimeConfig();
-// router
-const router = useRouter();
-
-// store
-const store = useToastStore();
+const toastStore = useToastStore();
 const statusStore = useStatusStore();
 const cartStore = useCartStore();
-
-// 資料定義
 const coupon = ref({});
 const couponPercent = ref(100);
 const discount = ref({ code: "" });
@@ -25,14 +20,14 @@ const classDiscount = () => {
 		body: discount.value,
 	})
 		.then((res) => {
-			store.messageHandle("恭喜已為您折扣課程費用");
-			store.isShowHandle();
+			toastStore.messageHandle("恭喜已為您折扣課程費用");
+			toastStore.isShowHandle();
 			couponPercent.value = res.data.percent;
 			coupon.value = res.data;
 		})
 		.catch(() => {
-			store.messageHandle("折扣碼錯誤，請再確認看看是否輸入錯誤");
-			store.isShowHandle();
+			toastStore.messageHandle("折扣碼錯誤，請再確認看看是否輸入錯誤");
+			toastStore.isShowHandle();
 			couponPercent.value = 100;
 			cartStore.getCart();
 		})
@@ -41,30 +36,14 @@ const classDiscount = () => {
 		});
 };
 
-const createOrder = (formdata) => {
-	statusStore.isLoading = true;
-	const api = `${config.public.apiUrl}/${config.public.uuid}/ec/orders`;
-	const order = formdata;
+const sendForm = (formdata) => {
+	const orderData = formdata;
 	if (coupon.value.enabled) {
-		order.coupon = coupon.value.code;
+		orderData.coupon = coupon.value.code;
 	}
-	$fetch(api, {
-		method: "POST",
-		body: order,
-	})
-		.then((res) => {
-			if (res.data.id) {
-				router.push(`/checkout/${res.data.id}`);
-			}
-		})
-		.catch(() => {
-			store.messageHandle("訂單送出失敗，再檢查看看");
-			store.isShowHandle();
-		})
-		.finally(() => {
-			statusStore.isLoading = false;
-		});
+	createOrder(orderData);
 };
+
 onMounted(() => {
 	cartStore.getCart();
 });
@@ -233,7 +212,7 @@ onMounted(() => {
 							class="form mt-5 needs-validation"
 							v-slot="{ meta, errors, values }"
 							novalidate
-							@submit="createOrder"
+							@submit="sendForm"
 						>
 							<h3 class="text-left">填寫資料</h3>
 							<div class="form-group">

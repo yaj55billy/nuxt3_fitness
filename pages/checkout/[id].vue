@@ -1,58 +1,8 @@
 <script setup>
-import { useToastStore } from "@/stores/useToast.js";
-import { useStatusStore } from "@/stores/useStatus.js";
-
-// route
-const route = useRoute();
-const router = useRouter();
-
-// toast store
-const store = useToastStore();
-const statusStore = useStatusStore();
-
-// 取 .env
-const config = useRuntimeConfig();
-
-// 資料定義
-const orderId = ref("");
-const order = ref({});
-
-const payOrder = () => {
-	statusStore.isLoading = true;
-	const api = `${config.public.apiUrl}/${config.public.uuid}/ec/orders/${orderId.value}/paying`;
-
-	$fetch(api, {
-		method: "POST",
-	})
-		.then((res) => {
-			if (res.data.paid) {
-				store.messageHandle("付款成功");
-				store.isShowHandle();
-				router.push(`/complete/${orderId.value}`);
-			}
-		})
-		.catch(() => {
-			store.messageHandle("Oops~您已經付過款項了");
-			store.isShowHandle();
-		})
-		.finally(() => {
-			statusStore.isLoading = false;
-		});
-};
-
+import { useOrder } from "@/composables/useOrder";
+const { order, getOrder, payOrder } = useOrder();
 onMounted(() => {
-	orderId.value = route.params.id;
-	if (orderId.value) {
-		statusStore.isLoading = true;
-		const api = `${config.public.apiUrl}/${config.public.uuid}/ec/orders/${orderId.value}`;
-		$fetch(api)
-			.then((res) => {
-				order.value = res.data;
-			})
-			.finally(() => {
-				statusStore.isLoading = false;
-			});
-	}
+	getOrder();
 });
 </script>
 <template>
