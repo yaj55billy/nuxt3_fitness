@@ -5,7 +5,7 @@ definePageMeta({
 import Toast from "@/components/Toast";
 import LoadingCustom from "@/components/LoadingCustom";
 import { useStatusStore } from "@/stores/useStatus.js";
-import { useUser } from "@/composables/useUser";
+import { useUser } from "@/composables/useUser.js";
 const statusStore = useStatusStore();
 const { user, signIn } = useUser();
 </script>
