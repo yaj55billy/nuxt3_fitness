@@ -2,11 +2,13 @@ import { ref } from "vue";
 
 import { useToastStore } from "@/stores/useToast.js";
 import { useStatusStore } from "@/stores/useStatus.js";
+import { useApiPath } from "@/composables/useApiPath";
 
 export function useAdminStorages() {
-	const config = useRuntimeConfig();
 	const statusStore = useStatusStore();
 	const toastStore = useToastStore();
+
+	const { apiAdminStorage, apiAdminDeleteStorage } = useApiPath();
 
 	// 狀態
 	const storages = ref([]);
@@ -28,8 +30,7 @@ export function useAdminStorages() {
 	const getData = (page = 1) => {
 		statusStore.isLoading = true;
 
-		const api = `${config.public.apiUrl}/${config.public.uuid}/admin/storage`;
-		$fetch(api, {
+		$fetch(apiAdminStorage, {
 			method: "GET",
 			query: { page: page },
 			headers: headers,
@@ -50,9 +51,8 @@ export function useAdminStorages() {
 
 	const deleteStorage = (id) => {
 		statusStore.isLoading = true;
-		const api = `${config.public.apiUrl}/${config.public.uuid}/admin/storage/${id}`;
 
-		$fetch(api, {
+		$fetch(apiAdminDeleteStorage(id), {
 			method: "DELETE",
 			headers: headers,
 		})

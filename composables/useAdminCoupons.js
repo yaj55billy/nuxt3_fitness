@@ -2,11 +2,18 @@ import { ref } from "vue";
 
 import { useToastStore } from "@/stores/useToast.js";
 import { useStatusStore } from "@/stores/useStatus.js";
+import { useApiPath } from "@/composables/useApiPath";
 
 export function useAdminCoupons() {
-	const config = useRuntimeConfig();
 	const statusStore = useStatusStore();
 	const toastStore = useToastStore();
+	const {
+		apiAdminGetCoupons,
+		apiAdminGetCoupon,
+		apiAdminPostCoupon,
+		apiAdminPatchCoupon,
+		apiAdminDeleteCoupon,
+	} = useApiPath();
 
 	// 狀態
 	const coupons = ref([]);
@@ -36,8 +43,7 @@ export function useAdminCoupons() {
 	const getCoupons = (num = 1) => {
 		statusStore.isLoading = true;
 
-		const api = `${config.public.apiUrl}/${config.public.uuid}/admin/ec/coupons`;
-		$fetch(api, {
+		$fetch(apiAdminGetCoupons, {
 			method: "GET",
 			query: { page: num },
 			headers: headers,
@@ -75,9 +81,7 @@ export function useAdminCoupons() {
 		} else {
 			statusStore.isLoading = true;
 
-			const api = `${config.public.apiUrl}/${config.public.uuid}/admin/ec/coupon/${item.id}`;
-
-			$fetch(api, {
+			$fetch(apiAdminGetCoupon(item.id), {
 				method: "GET",
 				headers: headers,
 			}).then((res) => {
@@ -87,8 +91,8 @@ export function useAdminCoupons() {
 					tempCoupons.value.deadline.datetime.split(" ");
 
 				status === "edit"
-					? couponModalHandle.value.show() // 編輯
-					: delCouponModalHandle.value.show(); // 刪除
+					? couponModalHandle.value.show()
+					: delCouponModalHandle.value.show();
 				statusStore.isLoading = false;
 			});
 		}
@@ -98,13 +102,13 @@ export function useAdminCoupons() {
 		statusStore.isLoading = true;
 		tempCoupons.value.deadline_at = `${coupon_date.value} ${coupon_time.value}`;
 
-		let api = `${config.public.apiUrl}/${config.public.uuid}/admin/ec/coupon`,
+		let api = apiAdminPostCoupon,
 			httpMethod = "POST",
 			successText = "優惠券新增成功",
 			failText = "優惠券新增失敗，請再檢查看看";
 
 		if (tempCoupons.value.id) {
-			api = `${config.public.apiUrl}/${config.public.uuid}/admin/ec/coupon/${tempCoupons.value.id}`;
+			api = apiAdminPatchCoupon(tempCoupons.value.id);
 			httpMethod = "PATCH";
 			successText = "優惠券編輯成功";
 			failText = "優惠券編輯失敗，請再檢查看看";
@@ -133,8 +137,7 @@ export function useAdminCoupons() {
 
 	const deleteCoupon = () => {
 		statusStore.isLoading = true;
-		const api = `${config.public.apiUrl}/${config.public.uuid}/admin/ec/coupon/${tempCoupons.value.id}`;
-		$fetch(api, {
+		$fetch(apiAdminDeleteCoupon(tempCoupons.value.id), {
 			method: "DELETE",
 			headers: headers,
 		})

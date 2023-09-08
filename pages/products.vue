@@ -1,15 +1,15 @@
 <script setup>
 import { useCartStore } from "@/stores/useCart.js";
-const config = useRuntimeConfig();
+import { useApiPath } from "@/composables/useApiPath";
 const cartStore = useCartStore();
 const products = ref([]);
 const nowProducts = ref([]);
 const nowCategory = ref("全部課程");
 const num = ref(1);
+const { apiGetProducts } = useApiPath();
 
 try {
-	const api = `${config.public.apiUrl}/${config.public.uuid}/ec/products`;
-	const { data: productsData } = await useFetch(api, {
+	const { data: productsData } = await useFetch(apiGetProducts, {
 		method: "GET",
 		query: { page: num },
 	});

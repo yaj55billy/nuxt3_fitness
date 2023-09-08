@@ -2,9 +2,18 @@ import { ref } from "vue";
 
 import { useToastStore } from "@/stores/useToast.js";
 import { useStatusStore } from "@/stores/useStatus.js";
+import { useApiPath } from "@/composables/useApiPath";
 
 export function useAdminProducts() {
-	const config = useRuntimeConfig();
+	const {
+		apiAdminGetProducts,
+		apiAdminGetProduct,
+		apiAdminPostProduct,
+		apiAdminPatchProduct,
+		apiAdminDeleteProduct,
+		apiAdminStorage,
+	} = useApiPath();
+
 	const statusStore = useStatusStore();
 	const toastStore = useToastStore();
 
@@ -29,9 +38,7 @@ export function useAdminProducts() {
 
 	const getProducts = (num = 1) => {
 		statusStore.isLoading = true;
-
-		const api = `${config.public.apiUrl}/${config.public.uuid}/admin/ec/products`;
-		$fetch(api, {
+		$fetch(apiAdminGetProducts, {
 			method: "GET",
 			query: { page: num },
 			headers: headers,
@@ -56,16 +63,14 @@ export function useAdminProducts() {
 			productModalHandle.value.show();
 		} else {
 			statusStore.isLoading = true;
-
-			const api = `${config.public.apiUrl}/${config.public.uuid}/admin/ec/product/${item.id}`;
-			$fetch(api, {
+			$fetch(apiAdminGetProduct(item.id), {
 				method: "GET",
 				headers: headers,
 			}).then((res) => {
 				tempProduct.value = res.data;
 				status === "edit"
-					? productModalHandle.value.show() // 編輯
-					: delProductModalHandle.value.show(); // 刪除
+					? productModalHandle.value.show()
+					: delProductModalHandle.value.show();
 				statusStore.isLoading = false;
 			});
 		}
@@ -73,14 +78,13 @@ export function useAdminProducts() {
 
 	const updateData = () => {
 		statusStore.isLoading = true;
-
-		let api = `${config.public.apiUrl}/${config.public.uuid}/admin/ec/product`,
+		let api = apiAdminPostProduct,
 			httpMethod = "POST",
 			successText = "產品新增成功",
 			failText = "產品新增失敗，請再檢查看看";
 
 		if (tempProduct.value.id) {
-			api = `${config.public.apiUrl}/${config.public.uuid}/admin/ec/product/${tempProduct.value.id}`;
+			api = apiAdminPatchProduct(tempProduct.value.id);
 			httpMethod = "PATCH";
 			successText = "產品編輯成功";
 			failText = "產品編輯失敗，請再檢查看看";
@@ -91,7 +95,7 @@ export function useAdminProducts() {
 			headers: headers,
 			body: tempProduct.value,
 		})
-			.then((res) => {
+			.then(() => {
 				productModalHandle.value.hide();
 				toastStore.messageHandle(successText);
 				toastStore.isShowHandle();
@@ -108,8 +112,7 @@ export function useAdminProducts() {
 	};
 	const deleteProduct = () => {
 		statusStore.isLoading = true;
-		const api = `${config.public.apiUrl}/${config.public.uuid}/admin/ec/product/${tempProduct.value.id}`;
-		$fetch(api, {
+		$fetch(apiAdminDeleteProduct(tempProduct.value.id), {
 			method: "DELETE",
 			headers: headers,
 		})
@@ -132,7 +135,6 @@ export function useAdminProducts() {
 	const uploadFile = () => {
 		fileUpLoading.value = true;
 		const catchFile = customFile.value.files[0];
-
 		const formData = new FormData();
 		formData.append("file", catchFile);
 
@@ -141,9 +143,7 @@ export function useAdminProducts() {
 			Authorization: `Bearer ${token.value}`,
 		};
 
-		const api = `${config.public.apiUrl}/${config.public.uuid}/admin/storage`;
-
-		$fetch(api, {
+		$fetch(apiAdminStorage, {
 			method: "POST",
 			headers: headers,
 			body: formData,

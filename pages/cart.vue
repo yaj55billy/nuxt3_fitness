@@ -3,8 +3,9 @@ import { useToastStore } from "@/stores/useToast.js";
 import { useCartStore } from "@/stores/useCart.js";
 import { useStatusStore } from "@/stores/useStatus.js";
 import { useOrder } from "@/composables/useOrder.js";
+import { useApiPath } from "@/composables/useApiPath";
 const { createOrder } = useOrder();
-const config = useRuntimeConfig();
+const { apiPostCouponSearch } = useApiPath();
 const toastStore = useToastStore();
 const statusStore = useStatusStore();
 const cartStore = useCartStore();
@@ -14,8 +15,7 @@ const discount = ref({ code: "" });
 
 const classDiscount = () => {
 	statusStore.isLoading = true;
-	const api = `${config.public.apiUrl}/${config.public.uuid}/ec/coupon/search`;
-	$fetch(api, {
+	$fetch(apiPostCouponSearch, {
 		method: "POST",
 		body: discount.value,
 	})

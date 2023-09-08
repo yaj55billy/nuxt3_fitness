@@ -1,12 +1,14 @@
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import { useToastStore } from "@/stores/useToast.js";
 import { useStatusStore } from "@/stores/useStatus.js";
+import { useApiPath } from "@/composables/useApiPath";
+
 // 登入、登出、驗證
 export function useUser() {
-	const router = useRouter(); // router
-	const config = useRuntimeConfig(); // 取 .env
-	const statusStore = useStatusStore(); // Store
+	const router = useRouter();
+	const statusStore = useStatusStore();
 	const toastStore = useToastStore();
+	const { apiAuthLogin, apiAuthCheck, apiAuthLogout } = useApiPath();
 
 	// 狀態
 	const user = ref({ email: "", password: "" });
@@ -15,9 +17,8 @@ export function useUser() {
 
 	const signIn = () => {
 		statusStore.isLoading = true;
-		const api = `${config.public.apiUrl}/auth/login`;
 
-		$fetch(api, {
+		$fetch(apiAuthLogin, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -50,8 +51,7 @@ export function useUser() {
 			/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/,
 			"$1"
 		);
-		const api = `${config.public.apiUrl}/auth/check`;
-		$fetch(api, {
+		$fetch(apiAuthCheck, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -71,8 +71,7 @@ export function useUser() {
 	};
 
 	const signOut = () => {
-		const api = `${config.public.apiUrl}/auth/logout`;
-		$fetch(api, {
+		$fetch(apiAuthLogout, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",

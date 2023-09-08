@@ -1,20 +1,20 @@
 <script setup>
 import { useToastStore } from "@/stores/useToast.js";
 import { useCartStore } from "@/stores/useCart.js";
-const config = useRuntimeConfig();
+import { useApiPath } from "@/composables/useApiPath";
 const route = useRoute();
 const router = useRouter();
 const toastStore = useToastStore();
 const cartStore = useCartStore();
+const { apiGetProducts, apiGetProduct } = useApiPath();
 const classNum = ref(1);
 const classMax = ref(36);
 const product = ref({});
 const relatedProducts = ref([]);
 
 const getRelatedProducts = () => {
-	const api = `${config.public.apiUrl}/${config.public.uuid}/ec/products`;
 	relatedProducts.value = [];
-	$fetch(api).then((res) => {
+	$fetch(apiGetProducts).then((res) => {
 		const resData = res.data;
 		resData.filter((item) => {
 			return item.category === product.value.category &&
@@ -26,8 +26,7 @@ const getRelatedProducts = () => {
 };
 try {
 	const { id } = route.params;
-	const api = `${config.public.apiUrl}/${config.public.uuid}/ec/product/${id}`;
-	const { data: productRes } = await useFetch(api);
+	const { data: productRes } = await useFetch(apiGetProduct(id));
 	product.value = productRes.value.data;
 	if (product.value.category === "體驗課程") {
 		classMax.value = 1;

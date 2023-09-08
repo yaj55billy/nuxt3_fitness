@@ -1,13 +1,14 @@
 import { ref } from "vue";
 import { useToastStore } from "@/stores/useToast.js";
 import { useStatusStore } from "@/stores/useStatus.js";
+import { useApiPath } from "@/composables/useApiPath";
 
 export function useOrder() {
 	const route = useRoute();
 	const router = useRouter();
-	const config = useRuntimeConfig();
 	const statusStore = useStatusStore();
 	const toastStore = useToastStore();
+	const { apiPostOrdersPay, apiGetOrders, apiPostOrders } = useApiPath();
 
 	// 狀態
 	const orderId = ref("");
@@ -15,9 +16,8 @@ export function useOrder() {
 
 	const payOrder = () => {
 		statusStore.isLoading = true;
-		const api = `${config.public.apiUrl}/${config.public.uuid}/ec/orders/${orderId.value}/paying`;
 
-		$fetch(api, {
+		$fetch(apiPostOrdersPay(orderId.value), {
 			method: "POST",
 		})
 			.then((res) => {
@@ -40,8 +40,7 @@ export function useOrder() {
 		orderId.value = route.params.id;
 		if (orderId.value) {
 			statusStore.isLoading = true;
-			const api = `${config.public.apiUrl}/${config.public.uuid}/ec/orders/${orderId.value}`;
-			$fetch(api)
+			$fetch(apiGetOrders(orderId.value))
 				.then((res) => {
 					order.value = res.data;
 				})
@@ -53,9 +52,7 @@ export function useOrder() {
 
 	const createOrder = (orderData) => {
 		statusStore.isLoading = true;
-		const api = `${config.public.apiUrl}/${config.public.uuid}/ec/orders`;
-
-		$fetch(api, {
+		$fetch(apiPostOrders, {
 			method: "POST",
 			body: orderData,
 		})
