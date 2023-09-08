@@ -1,14 +1,12 @@
 <script setup>
 import { useToastStore } from "@/stores/useToast.js";
 import { useStatusStore } from "@/stores/useStatus.js";
-
-// toast store
-const store = useToastStore();
+const toastStore = useToastStore();
 const statusStore = useStatusStore();
 const sendMail = (formData, actions) => {
 	statusStore.isLoading = true;
-	store.messageHandle("成功寄出，我們將會在三個工作天內回覆您。");
-	store.isShowHandle();
+	toastStore.messageHandle("成功寄出，我們將會在三個工作天內回覆您。");
+	toastStore.isShowHandle();
 	setTimeout(() => {
 		actions.resetForm();
 		statusStore.isLoading = false;

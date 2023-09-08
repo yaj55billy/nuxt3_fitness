@@ -11,11 +11,7 @@ const {
 	openDelModal,
 	deleteStorage,
 } = useAdminStorages();
-
-// bootstrap js
 const { $bootstrap } = useNuxtApp();
-
-// 取 dom
 const delStorageModal = ref(null);
 
 onMounted(() => {

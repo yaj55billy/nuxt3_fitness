@@ -1,13 +1,9 @@
 <script setup>
 import Pagination from "@/components/Pagination.vue";
 import { useAdminProducts } from "@/composables/useAdminProducts.js";
-// bootstrap js
 const { $bootstrap } = useNuxtApp();
-
-// 取 dom
 const productModal = ref(null);
 const delProductModal = ref(null);
-
 const {
 	products,
 	pagination,
@@ -25,7 +21,6 @@ const {
 
 onMounted(() => {
 	getProducts();
-
 	productModalHandle.value = new $bootstrap.Modal(productModal.value, {});
 	delProductModalHandle.value = new $bootstrap.Modal(delProductModal.value, {});
 });

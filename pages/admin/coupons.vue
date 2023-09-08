@@ -21,7 +21,6 @@ const {
 
 onMounted(() => {
 	getCoupons();
-
 	couponModalHandle.value = new $bootstrap.Modal(couponModal.value, {});
 	delCouponModalHandle.value = new $bootstrap.Modal(delCouponModal.value, {});
 });

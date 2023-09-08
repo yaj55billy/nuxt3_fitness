@@ -1,26 +1,16 @@
 <script setup>
 import { useToastStore } from "@/stores/useToast.js";
 import { useCartStore } from "@/stores/useCart.js";
-
-// route
+const config = useRuntimeConfig();
 const route = useRoute();
 const router = useRouter();
-
-// toast store
-const store = useToastStore();
-
-// 取 .env
-const config = useRuntimeConfig();
-
+const toastStore = useToastStore();
 const cartStore = useCartStore();
-
-// 資料定義
 const classNum = ref(1);
 const classMax = ref(36);
 const product = ref({});
 const relatedProducts = ref([]);
 
-// api
 const getRelatedProducts = () => {
 	const api = `${config.public.apiUrl}/${config.public.uuid}/ec/products`;
 	relatedProducts.value = [];
@@ -37,7 +27,6 @@ const getRelatedProducts = () => {
 try {
 	const { id } = route.params;
 	const api = `${config.public.apiUrl}/${config.public.uuid}/ec/product/${id}`;
-
 	const { data: productRes } = await useFetch(api);
 	product.value = productRes.value.data;
 	if (product.value.category === "體驗課程") {
@@ -45,8 +34,8 @@ try {
 	}
 	getRelatedProducts();
 } catch (error) {
-	store.messageHandle("Oops...發生了一些錯誤，請稍候重整看看。");
-	store.isShowHandle();
+	toastStore.messageHandle("Oops...發生了一些錯誤，請稍候重整看看。");
+	toastStore.isShowHandle();
 }
 
 const goOtherPage = (id) => {

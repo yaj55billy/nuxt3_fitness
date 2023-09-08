@@ -1,13 +1,7 @@
 <script setup>
 import { useCartStore } from "@/stores/useCart.js";
-
-// 取 .env
 const config = useRuntimeConfig();
-
-// cart Store
 const cartStore = useCartStore();
-
-// 資料定義
 const products = ref([]);
 const nowProducts = ref([]);
 const nowCategory = ref("全部課程");
