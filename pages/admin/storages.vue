@@ -1,92 +1,26 @@
 <script setup>
 import Pagination from "@/components/Pagination.vue";
-import { useToastStore } from "@/stores/useToast.js";
-import { useStatusStore } from "@/stores/useStatus.js";
+import { useAdminStorages } from "@/composables/useAdminStorages.js";
 
-// cart Store
-const statusStore = useStatusStore();
+const {
+	storages,
+	tempStorage,
+	pagination,
+	delStorageModalHandle,
+	getData,
+	openDelModal,
+	deleteStorage,
+} = useAdminStorages();
 
 // bootstrap js
 const { $bootstrap } = useNuxtApp();
 
-// 取 .env
-const config = useRuntimeConfig();
-
-// toast store
-const store = useToastStore();
-
-// 資料定義
-const storages = ref([]);
-const tempStorage = ref([]);
-const pagination = ref({});
-
 // 取 dom
 const delStorageModal = ref(null);
-let delStorageModalHandle;
-
-// about api
-const token = ref("");
-token.value = document.cookie.replace(
-	/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/,
-	"$1"
-);
-
-let headers = {
-	"Content-Type": "application/json",
-	Accept: "application/json",
-	Authorization: `Bearer ${token.value}`,
-};
-
-const getData = (page = 1) => {
-	statusStore.isLoading = true;
-
-	const api = `${config.public.apiUrl}/${config.public.uuid}/admin/storage`;
-	$fetch(api, {
-		method: "GET",
-		query: { page: page },
-		headers: headers,
-	})
-		.then((res) => {
-			storages.value = res.data;
-			pagination.value = res.meta.pagination;
-		})
-		.finally(() => {
-			statusStore.isLoading = false;
-		});
-};
-
-const openDelModal = (item) => {
-	tempStorage.value = item;
-	delStorageModalHandle.show();
-};
-
-const deleteStorage = (id) => {
-	statusStore.isLoading = true;
-	const api = `${config.public.apiUrl}/${config.public.uuid}/admin/storage/${id}`;
-
-	$fetch(api, {
-		method: "DELETE",
-		headers: headers,
-	})
-		.then(() => {
-			delStorageModalHandle.hide();
-			store.messageHandle("圖片刪除成功~~");
-			store.isShowHandle();
-			getData();
-		})
-		.catch(() => {
-			delStorageModalHandle.hide();
-			store.messageHandle("圖片刪除失敗，請再檢查看看");
-			store.isShowHandle();
-		})
-		.finally(() => {
-			statusStore.isLoading = false;
-		});
-};
 
 onMounted(() => {
 	getData();
-	delStorageModalHandle = new $bootstrap.Modal(delStorageModal.value, {});
+	delStorageModalHandle.value = new $bootstrap.Modal(delStorageModal.value, {});
 });
 </script>
 
