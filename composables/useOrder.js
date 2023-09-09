@@ -1,6 +1,7 @@
 import { ref } from "vue";
 import { useToastStore } from "@/stores/useToast.js";
 import { useStatusStore } from "@/stores/useStatus.js";
+import { useCartStore } from "@/stores/useCart.js";
 import { useApiPath } from "@/composables/useApiPath";
 
 export function useOrder() {
@@ -8,6 +9,7 @@ export function useOrder() {
 	const router = useRouter();
 	const statusStore = useStatusStore();
 	const toastStore = useToastStore();
+	const cartStore = useCartStore();
 	const { apiPostOrdersPay, apiGetOrders, apiPostOrders } = useApiPath();
 
 	// 狀態
@@ -32,6 +34,7 @@ export function useOrder() {
 				toastStore.isShowHandle();
 			})
 			.finally(() => {
+				cartStore.getCart();
 				statusStore.isLoading = false;
 			});
 	};
