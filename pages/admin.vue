@@ -1,69 +1,13 @@
 <script setup>
 import Toast from "@/components/Toast";
-
-// layout default false
+import LoadingAdmin from "@/components/LoadingAdmin.vue";
+import { useStatusStore } from "@/stores/useStatus.js";
+import { useUser } from "@/composables/useUser";
 definePageMeta({
 	layout: false,
 });
-
-// 取 .env
-const config = useRuntimeConfig();
-
-// toast store
-import { useToastStore } from "@/stores/useToast.js";
-const store = useToastStore();
-
-// router
-const router = useRouter();
-
-const token = ref("");
-const checkSuccess = ref(false);
-const checkLogin = () => {
-	token.value = document.cookie.replace(
-		/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/,
-		"$1"
-	);
-	const api = `${config.public.apiUrl}/auth/check`;
-	$fetch(api, {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-			Accept: "application/json",
-			Authorization: `Bearer ${token.value}`,
-		},
-		body: {
-			api_token: token.value,
-		},
-	})
-		.then((res) => {
-			checkSuccess.value = true;
-		})
-		.catch(() => {
-			router.push("/login");
-		});
-};
-
-const signout = () => {
-	const api = `${config.public.apiUrl}/auth/logout`;
-
-	$fetch(api, {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-			Accept: "application/json",
-			Authorization: `Bearer ${token.value}`,
-		},
-		body: {
-			api_token: token.value,
-		},
-	}).then((res) => {
-		store.messageHandle(res.message);
-		store.isShowHandle();
-		document.cookie = "token=; expires=; path=/";
-		router.push("/");
-	});
-};
-
+const statusStore = useStatusStore();
+const { checkSuccess, checkLogin, signOut } = useUser();
 onMounted(() => {
 	checkLogin();
 });
@@ -71,7 +15,7 @@ onMounted(() => {
 
 <template>
 	<Toast />
-	<div ref="pageLoading"></div>
+	<LoadingAdmin v-if="statusStore.isLoading" />
 	<div class="app">
 		<h2>後台管理頁面</h2>
 
@@ -87,7 +31,7 @@ onMounted(() => {
 						<NuxtLink to="/" class="nav-link active">回首頁</NuxtLink>
 					</li>
 					<li class="nav-item text-nowrap">
-						<a href="#" class="nav-link" @click.prevent="signout">登出</a>
+						<a href="#" class="nav-link" @click.prevent="signOut">登出</a>
 					</li>
 				</ul>
 			</div>

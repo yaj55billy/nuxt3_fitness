@@ -1,32 +1,20 @@
 <script setup>
-import LoadingCustom from "@/components/LoadingCustom.vue";
 import { useToastStore } from "@/stores/useToast.js";
 import { useCartStore } from "@/stores/useCart.js";
-
-// route
+import { useApiPath } from "@/composables/useApiPath";
 const route = useRoute();
 const router = useRouter();
-
-// toast store
-const store = useToastStore();
-
-// 取 .env
-const config = useRuntimeConfig();
-
+const toastStore = useToastStore();
 const cartStore = useCartStore();
-
-// 資料定義
+const { apiGetProducts, apiGetProduct } = useApiPath();
 const classNum = ref(1);
 const classMax = ref(36);
 const product = ref({});
 const relatedProducts = ref([]);
-const isLoading = ref(false); // api use
 
-// api
 const getRelatedProducts = () => {
-	const api = `${config.public.apiUrl}/${config.public.uuid}/ec/products`;
 	relatedProducts.value = [];
-	$fetch(api).then((res) => {
+	$fetch(apiGetProducts).then((res) => {
 		const resData = res.data;
 		resData.filter((item) => {
 			return item.category === product.value.category &&
@@ -38,18 +26,23 @@ const getRelatedProducts = () => {
 };
 try {
 	const { id } = route.params;
-	const api = `${config.public.apiUrl}/${config.public.uuid}/ec/product/${id}`;
-
-	const { data: productRes } = await useFetch(api);
+	const { data: productRes } = await useFetch(apiGetProduct(id));
 	product.value = productRes.value.data;
 	if (product.value.category === "體驗課程") {
 		classMax.value = 1;
 	}
 	getRelatedProducts();
 } catch (error) {
-	store.messageHandle("Oops...發生了一些錯誤，請稍候重整看看。");
-	store.isShowHandle();
+	toastStore.messageHandle("Oops...發生了一些錯誤，請稍候重整看看。");
+	toastStore.isShowHandle();
 }
+
+useSeoMeta({
+	title: `FitSpace 健身空間 - ${product.value.title}`,
+	ogTitle: `FitSpace 健身空間 - ${product.value.title}`,
+	description: `${product.value.description}`,
+	ogDescription: `${product.value.description}`,
+});
 
 const goOtherPage = (id) => {
 	router.push(`/product/${id}`);
@@ -58,7 +51,6 @@ const goOtherPage = (id) => {
 
 <template>
 	<div>
-		<LoadingCustom v-if="isLoading || cartStore.isCartLoading" />
 		<div class="container prod-detail">
 			<div class="row align-items-start">
 				<div class="col-md-6">

@@ -1,103 +1,26 @@
 <script setup>
-import { useLoading } from "vue-loading-overlay";
 import Pagination from "@/components/Pagination.vue";
-import { useToastStore } from "@/stores/useToast.js";
+import { useAdminStorages } from "@/composables/useAdminStorages.js";
 
-// bootstrap js
+const {
+	storages,
+	tempStorage,
+	pagination,
+	delStorageModalHandle,
+	getData,
+	openDelModal,
+	deleteStorage,
+} = useAdminStorages();
 const { $bootstrap } = useNuxtApp();
-
-// Loading
-const pageLoading = ref(null);
-
-const $loading = useLoading({
-	container: pageLoading.value,
-	zIndex: 1200,
-	opacity: 0.4,
-});
-
-// 取 .env
-const config = useRuntimeConfig();
-
-// toast store
-
-const store = useToastStore();
-
-// 資料定義
-const storages = ref([]);
-const tempStorage = ref([]);
-const pagination = ref({});
-
-// 取 dom
 const delStorageModal = ref(null);
-let delStorageModalHandle;
-
-// about api
-const token = ref("");
-token.value = document.cookie.replace(
-	/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/,
-	"$1"
-);
-
-let headers = {
-	"Content-Type": "application/json",
-	Accept: "application/json",
-	Authorization: `Bearer ${token.value}`,
-};
-
-const getData = (page = 1) => {
-	const loader = $loading.show();
-
-	const api = `${config.public.apiUrl}/${config.public.uuid}/admin/storage`;
-	$fetch(api, {
-		method: "GET",
-		query: { page: page },
-		headers: headers,
-	})
-		.then((res) => {
-			storages.value = res.data;
-			pagination.value = res.meta.pagination;
-		})
-		.finally(() => {
-			loader.hide();
-		});
-};
-
-const openDelModal = (item) => {
-	tempStorage.value = item;
-	delStorageModalHandle.show();
-};
-
-const deleteStorage = (id) => {
-	const loader = $loading.show();
-	const api = `${config.public.apiUrl}/${config.public.uuid}/admin/storage/${id}`;
-
-	$fetch(api, {
-		method: "DELETE",
-		headers: headers,
-	})
-		.then(() => {
-			delStorageModalHandle.hide();
-			store.messageHandle("圖片刪除成功~~");
-			store.isShowHandle();
-			loader.hide();
-			getData();
-		})
-		.catch(() => {
-			delStorageModalHandle.hide();
-			store.messageHandle("圖片刪除失敗，請再檢查看看");
-			store.isShowHandle();
-			loader.hide();
-		});
-};
 
 onMounted(() => {
 	getData();
-	delStorageModalHandle = new $bootstrap.Modal(delStorageModal.value, {});
+	delStorageModalHandle.value = new $bootstrap.Modal(delStorageModal.value, {});
 });
 </script>
 
 <template>
-	<div ref="pageLoading" class="pre"></div>
 	<div class="mt-4">
 		<h2 class="mt-sm-5 mt-4">圖片列表</h2>
 		<table class="table table-admin mt-4">

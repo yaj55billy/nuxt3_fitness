@@ -1,63 +1,12 @@
 <script setup>
-import LoadingCustom from "@/components/LoadingCustom.vue";
-import { useToastStore } from "@/stores/useToast.js";
-
-// route
-const route = useRoute();
-const router = useRouter();
-
-// toast store
-const store = useToastStore();
-
-// 取 .env
-const config = useRuntimeConfig();
-
-// 資料定義
-const orderId = ref("");
-const order = ref({});
-const isLoading = ref(false);
-
-const payOrder = () => {
-	isLoading.value = true;
-	const api = `${config.public.apiUrl}/${config.public.uuid}/ec/orders/${orderId.value}/paying`;
-
-	$fetch(api, {
-		method: "POST",
-	})
-		.then((res) => {
-			if (res.data.paid) {
-				store.messageHandle("付款成功");
-				store.isShowHandle();
-				router.push(`/complete/${orderId.value}`);
-			}
-		})
-		.catch(() => {
-			store.messageHandle("Oops~您已經付過款項了");
-			store.isShowHandle();
-		})
-		.finally(() => {
-			isLoading.value = false;
-		});
-};
-
+import { useOrder } from "@/composables/useOrder";
+const { order, getOrder, payOrder } = useOrder();
 onMounted(() => {
-	orderId.value = route.params.id;
-	if (orderId.value) {
-		isLoading.value = true;
-		const api = `${config.public.apiUrl}/${config.public.uuid}/ec/orders/${orderId.value}`;
-		$fetch(api)
-			.then((res) => {
-				order.value = res.data;
-			})
-			.finally(() => {
-				isLoading.value = false;
-			});
-	}
+	getOrder();
 });
 </script>
 <template>
 	<div class="page">
-		<LoadingCustom v-if="isLoading" />
 		<section class="section">
 			<div class="cart-page">
 				<div class="container">

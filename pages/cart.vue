@@ -1,80 +1,55 @@
 <script setup>
-import LoadingCustom from "@/components/LoadingCustom.vue";
 import { useToastStore } from "@/stores/useToast.js";
 import { useCartStore } from "@/stores/useCart.js";
-
-// toast store
-const store = useToastStore();
-
-// router
-const router = useRouter();
-
-// 取 .env
-const config = useRuntimeConfig();
-
+import { useStatusStore } from "@/stores/useStatus.js";
+import { useOrder } from "@/composables/useOrder.js";
+import { useApiPath } from "@/composables/useApiPath";
+const { createOrder } = useOrder();
+const { apiPostCouponSearch } = useApiPath();
+const toastStore = useToastStore();
+const statusStore = useStatusStore();
 const cartStore = useCartStore();
-
-// 資料定義
 const coupon = ref({});
 const couponPercent = ref(100);
 const discount = ref({ code: "" });
-const isLoading = ref(false); // 除了購物車功能外
 
 const classDiscount = () => {
-	isLoading.value = true;
-	const api = `${config.public.apiUrl}/${config.public.uuid}/ec/coupon/search`;
-	$fetch(api, {
+	statusStore.isLoading = true;
+	$fetch(apiPostCouponSearch, {
 		method: "POST",
 		body: discount.value,
 	})
 		.then((res) => {
-			store.messageHandle("恭喜已為您折扣課程費用");
-			store.isShowHandle();
+			toastStore.messageHandle("恭喜已為您折扣課程費用");
+			toastStore.isShowHandle();
 			couponPercent.value = res.data.percent;
 			coupon.value = res.data;
 		})
 		.catch(() => {
-			store.messageHandle("折扣碼錯誤，請再確認看看是否輸入錯誤");
-			store.isShowHandle();
+			toastStore.messageHandle("折扣碼錯誤，請再確認看看是否輸入錯誤");
+			toastStore.isShowHandle();
 			couponPercent.value = 100;
 			cartStore.getCart();
 		})
 		.finally(() => {
-			isLoading.value = false;
+			statusStore.isLoading = false;
 		});
 };
 
-const createOrder = (formdata) => {
-	isLoading.value = true;
-	const api = `${config.public.apiUrl}/${config.public.uuid}/ec/orders`;
-	const order = formdata;
+const sendForm = (formdata) => {
+	const orderData = formdata;
 	if (coupon.value.enabled) {
-		order.coupon = coupon.value.code;
+		orderData.coupon = coupon.value.code;
 	}
-	$fetch(api, {
-		method: "POST",
-		body: order,
-	})
-		.then((res) => {
-			if (res.data.id) {
-				router.push(`/checkout/${res.data.id}`);
-			}
-		})
-		.catch(() => {
-			store.messageHandle("訂單送出失敗，再檢查看看");
-			store.isShowHandle();
-		})
-		.finally(() => {
-			isLoading.value = false;
-		});
+	createOrder(orderData);
 };
+
 onMounted(() => {
 	cartStore.getCart();
 });
 </script>
 <template>
 	<div class="page">
-		<LoadingCustom v-if="isLoading || cartStore.isCartLoading" />
 		<section class="section">
 			<div class="cart-page">
 				<div class="container">
@@ -237,7 +212,7 @@ onMounted(() => {
 							class="form mt-5 needs-validation"
 							v-slot="{ meta, errors, values }"
 							novalidate
-							@submit="createOrder"
+							@submit="sendForm"
 						>
 							<h3 class="text-left">填寫資料</h3>
 							<div class="form-group">
@@ -370,5 +345,3 @@ onMounted(() => {
 		</section>
 	</div>
 </template>
-
-<style></style>

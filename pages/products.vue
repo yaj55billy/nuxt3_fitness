@@ -1,26 +1,23 @@
 <script setup>
-import LoadingCustom from "@/components/LoadingCustom.vue";
-import { useToastStore } from "@/stores/useToast.js";
+useSeoMeta({
+	title: "FitSpace 健身空間 - 課程列表",
+	ogTitle: "FitSpace 健身空間 - 課程列表",
+	description:
+		"課程列表 - FitSpace 有著豐富的課程，像是1對1、有氧訓練、瑜珈、肌力訓練等等，也歡迎透過體驗課程來體驗看看。",
+	ogDescription:
+		"課程列表 - FitSpace 有著豐富的課程，像是1對1、有氧訓練、瑜珈、肌力訓練等等，也歡迎透過體驗課程來體驗看看。",
+});
 import { useCartStore } from "@/stores/useCart.js";
-
-// toast store
-const store = useToastStore();
-
-// 取 .env
-const config = useRuntimeConfig();
-
+import { useApiPath } from "@/composables/useApiPath";
 const cartStore = useCartStore();
-
-// 資料定義
 const products = ref([]);
 const nowProducts = ref([]);
 const nowCategory = ref("全部課程");
-const isLoading = ref(false);
 const num = ref(1);
+const { apiGetProducts } = useApiPath();
 
 try {
-	const api = `${config.public.apiUrl}/${config.public.uuid}/ec/products`;
-	const { data: productsData } = await useFetch(api, {
+	const { data: productsData } = await useFetch(apiGetProducts, {
 		method: "GET",
 		query: { page: num },
 	});
@@ -52,7 +49,6 @@ const productHandler = (catchVal = "全部課程") => {
 
 <template>
 	<div>
-		<LoadingCustom v-if="isLoading || cartStore.isCartLoading" />
 		<PageBanner :text="'課程列表'" />
 		<div class="container prod">
 			<div class="congratulate">

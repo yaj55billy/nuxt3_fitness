@@ -41,6 +41,6 @@ const store = useToastStore();
 	top: 20px;
 	right: 20px;
 	max-width: 300px;
-	z-index: 1050;
+	z-index: 1250;
 }
 </style>

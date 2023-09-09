@@ -1,4 +1,9 @@
-<script setup></script>
+<script setup>
+useSeoMeta({
+	title: "FitSpace 健身空間 - 常見問題",
+	ogTitle: "FitSpace 健身空間 - 常見問題",
+});
+</script>
 
 <template>
 	<PageBanner :text="'常見問題'" />

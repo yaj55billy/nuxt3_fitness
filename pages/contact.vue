@@ -1,26 +1,29 @@
 <script setup>
-import LoadingCustom from "@/components/LoadingCustom.vue";
+useSeoMeta({
+	title: "FitSpace 健身空間 - 聯絡我們",
+	ogTitle: "FitSpace 健身空間 - 聯絡我們",
+	description:
+		"有任何問題都歡迎透過電話或表單聯繫我們，表單聯繫會在三個工作天回覆您。",
+	ogDescription:
+		"有任何問題都歡迎透過電話或表單聯繫我們，表單聯繫會在三個工作天回覆您。",
+});
 import { useToastStore } from "@/stores/useToast.js";
-
-// toast store
-const store = useToastStore();
-
-const isLoading = ref(false);
-
+import { useStatusStore } from "@/stores/useStatus.js";
+const toastStore = useToastStore();
+const statusStore = useStatusStore();
 const sendMail = (formData, actions) => {
-	isLoading.value = true;
-	store.messageHandle("成功寄出，我們將會在三個工作天內回覆您。");
-	store.isShowHandle();
+	statusStore.isLoading = true;
+	toastStore.messageHandle("成功寄出，我們將會在三個工作天內回覆您。");
+	toastStore.isShowHandle();
 	setTimeout(() => {
 		actions.resetForm();
-		isLoading.value = false;
+		statusStore.isLoading = false;
 	}, 1500);
 };
 </script>
 
 <template>
 	<PageBanner :text="'聯絡我們'" />
-	<LoadingCustom v-if="isLoading" />
 	<div class="mt-6 mb-6">
 		<div class="container">
 			<h2 class="home-title">聯絡我們</h2>

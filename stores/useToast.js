@@ -1,7 +1,6 @@
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import { defineStore } from "pinia";
 
-// composition
 export const useToastStore = defineStore("toast", () => {
 	const isShow = ref(false);
 	const message = ref("");

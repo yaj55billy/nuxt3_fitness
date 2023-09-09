@@ -1,188 +1,32 @@
 <script setup>
-import { useLoading } from "vue-loading-overlay";
 import Pagination from "@/components/Pagination.vue";
-import { useToastStore } from "@/stores/useToast.js";
+import { useAdminCoupons } from "@/composables/useAdminCoupons.js";
 
-// bootstrap js
-const { $bootstrap } = useNuxtApp();
-
-// Loading
-const pageLoading = ref(null);
-
-const $loading = useLoading({
-	container: pageLoading.value,
-	zIndex: 1200,
-	opacity: 0.4,
-});
-
-// toast store
-const store = useToastStore();
-
-// 取 .env
-const config = useRuntimeConfig();
-
-// 資料定義
-const coupons = ref([]);
-const pagination = ref({});
-const tempCoupons = ref({
-	title: "",
-	code: "",
-	percent: 0,
-	enabled: false,
-	deadline_at: 0,
-});
-const coupon_date = ref("");
-const coupon_time = ref("");
-
-// dom
+const { $bootstrap } = useNuxtApp(); // bootstrap js
 const couponModal = ref(null);
 const delCouponModal = ref(null);
-let couponModalHandle;
-let delCouponModalHandle;
-
-// about api
-const token = ref("");
-token.value = document.cookie.replace(
-	/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/,
-	"$1"
-);
-
-let headers = {
-	"Content-Type": "application/json",
-	Accept: "application/json",
-	Authorization: `Bearer ${token.value}`,
-};
-
-const getCoupons = (num = 1) => {
-	const loader = $loading.show();
-
-	const api = `${config.public.apiUrl}/${config.public.uuid}/admin/ec/coupons`;
-	$fetch(api, {
-		method: "GET",
-		query: { page: num },
-		headers: headers,
-	})
-		.then((res) => {
-			coupons.value = res.data;
-			pagination.value = res.meta.pagination;
-		})
-		.finally(() => {
-			loader.hide();
-		});
-	if (tempCoupons.value.id) {
-		tempCoupons.value = {
-			title: "",
-			code: "",
-			percent: 0,
-			enabled: false,
-			deadline_at: 0,
-		};
-		coupon_date.value = "";
-		coupon_time.value = "";
-	}
-};
-
-const openCouponModal = (status, item) => {
-	if (status === "new") {
-		tempCoupons.value = {
-			title: "",
-			code: "",
-			percent: 0,
-			enabled: false,
-			deadline_at: 0,
-		};
-		couponModalHandle.show();
-	} else {
-		const loader = $loading.show();
-
-		const api = `${config.public.apiUrl}/${config.public.uuid}/admin/ec/coupon/${item.id}`;
-
-		$fetch(api, {
-			method: "GET",
-			headers: headers,
-		}).then((res) => {
-			tempCoupons.value = res.data;
-
-			[coupon_date.value, coupon_time.value] =
-				tempCoupons.value.deadline.datetime.split(" ");
-
-			status === "edit"
-				? couponModalHandle.show() // 編輯
-				: delCouponModalHandle.show(); // 刪除
-			loader.hide();
-		});
-	}
-};
-
-const updateCoupon = () => {
-	const loader = $loading.show();
-	tempCoupons.value.deadline_at = `${coupon_date.value} ${coupon_time.value}`;
-
-	let api = `${config.public.apiUrl}/${config.public.uuid}/admin/ec/coupon`,
-		httpMethod = "POST",
-		successText = "優惠券新增成功",
-		failText = "優惠券新增失敗，請再檢查看看";
-
-	if (tempCoupons.value.id) {
-		api = `${config.public.apiUrl}/${config.public.uuid}/admin/ec/coupon/${tempCoupons.value.id}`;
-
-		httpMethod = "PATCH";
-		successText = "優惠券編輯成功";
-		failText = "優惠券編輯失敗，請再檢查看看";
-	}
-
-	$fetch(api, {
-		method: httpMethod,
-		headers: headers,
-		body: tempCoupons.value,
-	})
-		.then((res) => {
-			couponModalHandle.hide();
-			store.messageHandle(successText);
-			store.isShowHandle();
-			loader.hide();
-			getCoupons();
-		})
-		.catch(() => {
-			loader.hide();
-			couponModalHandle.hide();
-			store.messageHandle(failText);
-			store.isShowHandle();
-		});
-};
-
-const deleteCoupon = () => {
-	const loader = $loading.show();
-	const api = `${config.public.apiUrl}/${config.public.uuid}/admin/ec/coupon/${tempCoupons.value.id}`;
-	$fetch(api, {
-		method: "DELETE",
-		headers: headers,
-	})
-		.then((res) => {
-			store.messageHandle("優惠券已刪除");
-			store.isShowHandle();
-			getCoupons();
-		})
-		.catch(() => {
-			store.messageHandle("優惠券刪除失敗，請再檢查看看");
-			store.isShowHandle();
-		})
-		.finally(() => {
-			delCouponModalHandle.hide();
-			loader.hide();
-		});
-};
+const {
+	coupons,
+	pagination,
+	tempCoupons,
+	coupon_date,
+	coupon_time,
+	couponModalHandle,
+	delCouponModalHandle,
+	getCoupons,
+	openCouponModal,
+	updateCoupon,
+	deleteCoupon,
+} = useAdminCoupons();
 
 onMounted(() => {
 	getCoupons();
-
-	couponModalHandle = new $bootstrap.Modal(couponModal.value, {});
-	delCouponModalHandle = new $bootstrap.Modal(delCouponModal.value, {});
+	couponModalHandle.value = new $bootstrap.Modal(couponModal.value, {});
+	delCouponModalHandle.value = new $bootstrap.Modal(delCouponModal.value, {});
 });
 </script>
 
 <template>
-	<div ref="pageLoading"></div>
 	<div class="mt-4">
 		<h2>優惠券列表</h2>
 		<div class="text-end mt-sm-2 mt-4">

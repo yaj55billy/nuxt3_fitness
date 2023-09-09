@@ -1,3 +1,4 @@
+<script setup></script>
 <template>
 	<div class="loading-overlay">
 		<div class="loading-scope">
@@ -7,9 +8,5 @@
 		</div>
 	</div>
 </template>
-
-<script>
-export default {};
-</script>
 
 <style></style>
