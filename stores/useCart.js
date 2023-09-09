@@ -21,6 +21,7 @@ export const useCartStore = defineStore("cart", () => {
 		})
 			.then((res) => {
 				if (res.data.length === 0) {
+					carts.value = [];
 					cartsEmpty.value = true;
 				} else {
 					carts.value = res.data;
