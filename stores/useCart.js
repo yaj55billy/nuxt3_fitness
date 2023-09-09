@@ -24,6 +24,7 @@ export const useCartStore = defineStore("cart", () => {
 					cartsEmpty.value = true;
 				} else {
 					carts.value = res.data;
+					cartsEmpty.value = false;
 					updateTotal();
 				}
 			})
