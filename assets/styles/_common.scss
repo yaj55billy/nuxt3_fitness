@@ -417,16 +417,6 @@ h6 {
 	}
 }
 
-// 表單相關
-// input:-internal-autofill-selected {
-// 	background-color: transparent;
-// }
-// input:-webkit-autofill {
-// 	background-color: rgb(250, 255, 189) !important;
-// 	background-image: none !important;
-// 	color: rgb(0, 0, 0) !important;
-// }
-
 // 覆寫 Bs5
 .form-control:focus {
 	box-shadow: 0 0 0 0;
@@ -442,4 +432,16 @@ h6 {
 label {
 	display: inline-block;
 	margin-bottom: 0.5rem;
+}
+
+// notfound
+.notfound {
+	min-height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	&__status {
+		font-size: 8rem;
+		text-shadow: 8px 8px 16px lighten($primary, 45%);
+	}
 }

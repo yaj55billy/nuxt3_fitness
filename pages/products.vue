@@ -1,4 +1,12 @@
 <script setup>
+useSeoMeta({
+	title: "FitSpace 健身空間 - 課程列表",
+	ogTitle: "FitSpace 健身空間 - 課程列表",
+	description:
+		"課程列表 - FitSpace 有著豐富的課程，像是1對1、有氧訓練、瑜珈、肌力訓練等等，也歡迎透過體驗課程來體驗看看。",
+	ogDescription:
+		"課程列表 - FitSpace 有著豐富的課程，像是1對1、有氧訓練、瑜珈、肌力訓練等等，也歡迎透過體驗課程來體驗看看。",
+});
 import { useCartStore } from "@/stores/useCart.js";
 import { useApiPath } from "@/composables/useApiPath";
 const cartStore = useCartStore();

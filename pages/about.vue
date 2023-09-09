@@ -1,4 +1,13 @@
-<script setup></script>
+<script setup>
+useSeoMeta({
+	title: "FitSpace 健身空間 - 關於我們",
+	ogTitle: "FitSpace 健身空間 - 關於我們",
+	description:
+		"關於我們 - FitSpace 希望藉由這樣的運動空間，盡力讓大家了解正確的運動知識、飲食觀念，並期望能幫助到更多的人",
+	ogDescription:
+		"關於我們 - FitSpace 希望藉由這樣的運動空間，盡力讓大家了解正確的運動知識、飲食觀念，並期望能幫助到更多的人",
+});
+</script>
 
 <template>
 	<PageBanner :text="'關於我們'" />

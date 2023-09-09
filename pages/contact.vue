@@ -1,4 +1,12 @@
 <script setup>
+useSeoMeta({
+	title: "FitSpace 健身空間 - 聯絡我們",
+	ogTitle: "FitSpace 健身空間 - 聯絡我們",
+	description:
+		"有任何問題都歡迎透過電話或表單聯繫我們，表單聯繫會在三個工作天回覆您。",
+	ogDescription:
+		"有任何問題都歡迎透過電話或表單聯繫我們，表單聯繫會在三個工作天回覆您。",
+});
 import { useToastStore } from "@/stores/useToast.js";
 import { useStatusStore } from "@/stores/useStatus.js";
 const toastStore = useToastStore();

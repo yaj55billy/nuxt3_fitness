@@ -37,6 +37,13 @@ try {
 	toastStore.isShowHandle();
 }
 
+useSeoMeta({
+	title: `FitSpace 健身空間 - ${product.value.title}`,
+	ogTitle: `FitSpace 健身空間 - ${product.value.title}`,
+	description: `${product.value.description}`,
+	ogDescription: `${product.value.description}`,
+});
+
 const goOtherPage = (id) => {
 	router.push(`/product/${id}`);
 };

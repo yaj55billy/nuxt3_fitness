@@ -3,16 +3,11 @@ import { useToastStore } from "./useToast.js";
 import { useStatusStore } from "./useStatus.js";
 import { defineStore } from "pinia";
 
-// composition
 export const useCartStore = defineStore("cart", () => {
-	// 取 .env
 	const config = useRuntimeConfig();
-
-	// toastStore
 	const toastStore = useToastStore();
 	const statusStore = useStatusStore();
 
-	// 資料定義
 	const carts = ref([]);
 	const cartPrice = ref(0);
 	const cartsEmpty = ref(false);
@@ -20,7 +15,6 @@ export const useCartStore = defineStore("cart", () => {
 
 	const getCart = () => {
 		statusStore.isLoading = true;
-		// isCartLoading.value = true;
 		const api = `${config.public.apiUrl}/${config.public.uuid}/ec/shopping`;
 		$fetch(api, {
 			method: "GET",
@@ -30,17 +24,15 @@ export const useCartStore = defineStore("cart", () => {
 					cartsEmpty.value = true;
 				} else {
 					carts.value = res.data;
-					// console.log("Pinia", carts.value.length);
 					updateTotal();
 				}
 			})
 			.finally(() => {
 				statusStore.isLoading = false;
-				// isCartLoading.value = false;
 			});
 	};
 	const updateTotal = () => {
-		cartPrice.value = 0; // 歸零。
+		cartPrice.value = 0;
 		carts.value.forEach((item) => {
 			cartPrice.value += item.product.price * item.quantity;
 		});
@@ -62,17 +54,14 @@ export const useCartStore = defineStore("cart", () => {
 				toastStore.isShowHandle();
 				getCart();
 				statusStore.isLoading = true;
-				// isCartLoading.value = false;
 			})
 			.catch((error) => {
 				toastStore.messageHandle(error.response._data.errors[0]);
 				toastStore.isShowHandle();
 				statusStore.isLoading = false;
-				// isCartLoading.value = false;
 			});
 	};
 	const deleteCartItem = (id) => {
-		// isCartLoading.value = true;
 		statusStore.isLoading = true;
 		const api = `${config.public.apiUrl}/${config.public.uuid}/ec/shopping/${id}`;
 		$fetch(api, {
@@ -82,13 +71,11 @@ export const useCartStore = defineStore("cart", () => {
 				getCart();
 			})
 			.finally(() => {
-				// isCartLoading.value = false;
 				statusStore.isLoading = false;
 			});
 	};
 
 	const editCartItemNum = (id, quantity) => {
-		// isCartLoading.value = true;
 		statusStore.isLoading = true;
 		const api = `${config.public.apiUrl}/${config.public.uuid}/ec/shopping`;
 		const cart = {
@@ -114,7 +101,6 @@ export const useCartStore = defineStore("cart", () => {
 		carts,
 		cartPrice,
 		cartsEmpty,
-		// isCartLoading,
 		getCart,
 		addToCart,
 		deleteCartItem,
