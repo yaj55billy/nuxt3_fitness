@@ -34,8 +34,8 @@
     - order.vue：後台訂單列表頁面
     - products.vue：後台產品列表頁面
     - storages.vue：後台圖片列表頁面
-  - checkout/[id].vue：前台付款頁面
-  - complete/[id].vue：前台付款完成頁面
+  - checkout/[id].vue：前台付款頁面（動態路由）
+  - complete/[id].vue：前台付款完成頁面（動態路由）
   - product/[id].vue：前台課程細節頁面（動態路由）
   - [...slug].vue：404頁面定義
   - about.vue：前台關於我們頁面
